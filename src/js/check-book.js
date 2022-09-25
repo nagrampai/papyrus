@@ -1,6 +1,7 @@
 var connection = require('./js/db');
 
 const bookSearchForm = document.querySelector('form');
+const resultDiv = document.querySelector('#resultDiv');
 
 function getBookId(event){
   event.preventDefault();
@@ -19,13 +20,29 @@ function getBookId(event){
    else sqlQuery = 'SELECT * FROM books WHERE book_id=' + bookNum + '\;';
  
 
-  const resultDiv = document.querySelector('#resultDiv');
-  connection.query(sqlQuery, function (error, results, fields) {
-    if (error) throw error;
-    console.log(results);
-    results.forEach( result => {resultDiv.innerHTML = result['title'] + '<br/>';} );
-  });
+   connection.query(sqlQuery, function (error, results, fields) {
+     if (error) {
+       handleError();
+       throw error;
+     } 
+     else displayBookResult(results[0]);
+    });
+    
+  }
   
+function displayBookResult(bookData) {
+    console.log( bookData );
+    const booksContent = `
+          Book ID: ${bookData['book_id']} <br />
+          Book Code: ${bookData['book_code']} <br />
+          Title: ${bookData["title"]} <br />
+          Author: ${bookData["author"]} <br />`;
+
+    resultDiv.innerHTML = booksContent;
+  }
+
+function handleError(){
+  resultDiv.innerHTML = `<p>Unable to locate book in our records. Please check the ID</p>`;
 }
 
 bookSearchForm.addEventListener('submit', getBookId);
