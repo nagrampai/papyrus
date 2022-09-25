@@ -1,0 +1,19 @@
+{
+  "name": "electron-test",
+  "version": "1.0.0",
+  "description": "test app for learning",
+  "main": "main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nagesh",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^20.2.0"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
