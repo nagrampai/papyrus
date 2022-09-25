@@ -2,17 +2,20 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href=".././dist/output.css">
     <title>Papyrus @ Athena</title>
   </head>
-  <body>
-    <h1>Papyrus @ Athena</h1>
-    <form id="book-search-form" action="" target="_top">
-      <input type="search" name="book-id" id="book-id" required >
-      <input type="submit" value="Search">
-    </form>
-    <div id="resultDiv">
-    </div>
+  <body class="p-8">
+
+    <h1 class="text-4xl w-11/12 m-auto bg-gray-700 text-center p-4 rounded-lg bg-opacity-50 font-extrabold mb-10">Papyrus @ Athena</h1>
+    <main class="w-11/12 m-auto">
+      <form id="book-search-form" action="" target="_top" class="text-center">
+        <input type="search" name="book-id" id="book-id" required class="py-2 px-4 border-2 w-3/12" >
+        <input type="submit" value="Search" class="group  w-1/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
+      </form>
+      <div id="resultDiv">
+      </div>
+    </main>
 
     <a href="./index.html"> Home</a>
     <script type="module" src="./js/check-book.js"></script>
