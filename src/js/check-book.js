@@ -14,8 +14,9 @@ function getBookId( event ){
   });}
  
   let sqlQuery = "";
-  if( bookNum.length === 5 && ( bookNum[0] === 'G' || bookNum[0] === 'K' )){
-    sqlQuery = 'SELECT * FROM books WHERE book_code= "' + bookNum + '";';
+  if( bookNum.length === 5 && ( bookNum[0].toUpperCase() === 'G' || bookNum[0].toUpperCase() === 'K' )){
+    sqlQuery = 'SELECT * FROM books WHERE book_code= "' + bookNum.toUpperCase() + '";';
+    console.log(sqlQuery);
   }
    else sqlQuery = 'SELECT * FROM books WHERE book_id=' + bookNum + '\;';
  
@@ -40,6 +41,16 @@ function displayBookResult( bookData ) {
 
     if( bookData[ 'available' ] === 1 ) {
       booksContent += 'The book is currently available for issue';
+
+      const issueBook = `
+        <div id='issue-book' class="mt-20" >
+          <form id="book-issue-form" action="" target="_top">
+            <input type="number" name="book-id" id="book-id" required class="py-2 px-4 border-2 w-4/12" min="30000" max="62704">
+            <input type="submit" value="Issue Book" class="group  w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-5 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
+          </form>
+        </div>`;
+
+        booksContent += issueBook;
     } else {
       booksContent += ' The book is currently not available';
     }

@@ -43,7 +43,12 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "options": {
+              "maintainer" : "Nagesh Pai",
+              "homepage"   : "https://nagpai.blog"
+            }
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
