@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow } = require( 'electron' );
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -11,22 +11,22 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("src/index.html");
+  win.loadFile( "src/index.html" );
 };
 
 app.whenReady().then(() => {
 
   createWindow();
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
+  app.on( 'activate', () => {
+		if ( BrowserWindow.getAllWindows().length === 0 ) {
+			createWindow();
+		}
+  } );
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on( 'window-all-closed', () => {
+  if ( process.platform !== 'darwin' ) {
     app.quit();
   }
-});
+} );
