@@ -38,7 +38,7 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "darwin", "linux"
           ]
         },
         {
@@ -49,10 +49,6 @@
               "homepage"   : "https://nagpai.blog"
             }
           }
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
         }
       ]
     }
