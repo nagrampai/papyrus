@@ -27,15 +27,13 @@ function getBookId( event ){
         throw err;
       })
     );
-    
-    
   }
   
   function displayBookResult( bookData ) {
     
     let booksContent = `
-          <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
           <div id="book-details" class='mb-5'>
+            <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
             Book ID  : ${bookData["book_id"]} <br />
             Book Code: ${bookData["book_code"]} <br />
             Title    : ${bookData["title"]} <br />
@@ -43,22 +41,24 @@ function getBookId( event ){
           </div>`;
 
     if( bookData[ 'available' ] === 1 ) {
-      booksContent += 'The book is currently available for issue';
+      booksContent += 'The book is currently available for issue!';
 
       const issueBook = `
         <div id='issue-book' class="mt-20 " >
           <form id="book-issue-form" action="" target="_top">
-            <input type="number" name="book-id" id="book-id" required class="py-2 px-4 border-2 w-4/12" min="30000" max="62704">
-            <input type="submit" value="Issue Book" class="group  w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
+            <input type="number" name="book-id" id="book-id" required class="py-2 px-4 border-2 w-6/12" min="30101" max="62704">
+            <input type="submit" value="Issue Book" class="group  w-4/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
           </form>
         </div>`;
 
         booksContent += issueBook;
+        leftColumn.innerHTML = booksContent;
     } else {
-      booksContent += ' The book is currently not available';
+        booksContent += ' The book is currently issued and not available';
+        leftColumn.innerHTML = booksContent;
     }
 
-    leftColumn.innerHTML = booksContent;
+    //leftColumn.innerHTML = booksContent;
    bookIssueDetails( bookData["book_id"] );
   }
 
@@ -70,15 +70,15 @@ bookSearchForm.addEventListener( 'submit', getBookId );
 
 function bookIssueDetails( bookID ) {
   console.log(bookID);
-  const bookIssueQuery = 'SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=' + bookID + ' ORDER BY doi DESC LIMIT 10;';
+  const bookHistoryQuery = 'SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=' + bookID + ' ORDER BY doi DESC LIMIT 10;';
 
-  console.log( bookIssueQuery );
+  console.log( bookHistoryQuery );
 
- getQueryData(bookIssueQuery)
+ getQueryData(bookHistoryQuery)
     .then((results) => {
-      renderBookHistory(results);
+      renderBookHistory( results );
     })
-    .catch((err) =>
+    .catch(( err ) =>
       setImmediate(() => {
         handleError();
         throw err;
@@ -88,18 +88,19 @@ function bookIssueDetails( bookID ) {
     function renderBookHistory( bookHistory ) {
 
       if ( bookHistory.length === 0 ) {
-        rightColumn.innerHTML = '';
+        rightColumn.innerHTML = '<p> The book has no issue history</p>';
         return;
       }
       
-      const bookHistoryContent = document.createElement('table');
-      bookHistoryContent.className = 'table-auto';
-      bookHistoryContent.innerHTML = `
+      const bookHistoryTable = document.createElement( 'table' );
+      //bookHistoryTable.className = 'table-auto';
+      bookHistoryTable.classList.add('border', 'border-collapse', 'border-gray-600');
+      bookHistoryTable.innerHTML = `
         <thead>
           <tr>
-            <th>Issued on</th>
-            <th>Returned</th>
-            <th>Member - Apartment</th>
+            <th class='border border-gray-600'>Issued on</th>
+            <th class='border border-gray-600'>Returned</th>
+            <th class='border border-gray-600'>Member - Apartment</th>
           </tr>
         </thead>
       `;
@@ -110,19 +111,22 @@ function bookIssueDetails( bookID ) {
         
         const doi = document.createElement('td');
         doi.innerHTML = record[ 'doi' ] === null ? '----' : `${record[ 'doi' ].toDateString().substring(3)}`;
+        doi.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
         row.appendChild( doi );
 
         const dor = document.createElement('td');
         dor.innerHTML =  record[ 'dor' ] === null ? '----' : `${record[ 'dor' ].toDateString().substring(3)}`;
+        dor.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
         row.appendChild( dor );
 
         const memberDetails = document.createElement('td');
         memberDetails.innerHTML = `${record["name"]} - ${record["member_id"]}`;
+        memberDetails.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
         row.appendChild( memberDetails );
 
-        bookHistoryContent.appendChild(row);
+        bookHistoryTable.appendChild(row);
       });
       rightColumn.innerHTML = '';
-      rightColumn.appendChild(bookHistoryContent);
+      rightColumn.appendChild(bookHistoryTable);
     }
 }
