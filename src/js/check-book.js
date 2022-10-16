@@ -35,15 +35,7 @@ function getSearchQuery(event) {
   };
 }
 
-
-
-
-
 masterSearchForm.addEventListener( "submit", getSearchQuery );
-
-
-
-
 
 function getFlatNumberFromMemberID(memberID) {// Converts member ID to wing and flat number. Eg. - D703)
   if (memberID.length !== 5) return;
@@ -182,5 +174,3 @@ function renderBookHistory(bookHistory) {
   rightColumn.innerHTML = "";
   rightColumn.appendChild(bookHistoryTable);
 }
-
-module.exports ={ getFlatNumberFromMemberID };
