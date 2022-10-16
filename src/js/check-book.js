@@ -1,22 +1,25 @@
-var { connection, getQueryData, startConnection } = require( './js/db' );
+var { connection, getQueryData, startConnection } = require("./js/db");
 
-const bookSearchForm = document.querySelector( 'form' );
-const leftColumn = document.querySelector( '#left-column' );
-const rightColumn = document.querySelector( '#right-column' );
+const bookSearchForm = document.querySelector("form");
+const leftColumn = document.querySelector("#left-column");
+const rightColumn = document.querySelector("#right-column");
 
-function getBookId( event ){
+function getBookId(event) {
   event.preventDefault();
-  const bookNum = bookSearchForm.elements[ 'book-id' ].value;
-  
+  const bookNum = bookSearchForm.elements["book-id"].value;
+
   startConnection();
-  
-  // Fetch book details either by Book code or Book ID. 
+
+  // Fetch book details either by Book code or Book ID.
   let sqlQuery = "";
-  if( bookNum.length === 5 && ( bookNum[0].toUpperCase() === 'G' || bookNum[0].toUpperCase() === 'K' )){
-    sqlQuery = 'SELECT * FROM books WHERE book_code= "' + bookNum.toUpperCase() + '";';
-  }
-  else sqlQuery = 'SELECT * FROM books WHERE book_id=' + bookNum + '\;';
-  
+  if (
+    bookNum.length === 5 &&
+    (bookNum[0].toUpperCase() === "G" || bookNum[0].toUpperCase() === "K")
+  ) {
+    sqlQuery =
+      'SELECT * FROM books WHERE book_code= "' + bookNum.toUpperCase() + '";';
+  } else sqlQuery = "SELECT * FROM books WHERE book_id=" + bookNum + ";";
+
   getQueryData(sqlQuery)
     .then((results) => {
       displayBookResult(results[0]);
@@ -27,11 +30,10 @@ function getBookId( event ){
         throw err;
       })
     );
-  }
-  
-  function displayBookResult( bookData ) {
-    
-    let booksContent = `
+}
+
+function displayBookResult(bookData) {
+  let booksContent = `
           <div id="book-details" class='mb-5'>
             <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
             Book ID  : ${bookData["book_id"]} <br />
@@ -40,10 +42,10 @@ function getBookId( event ){
             Author   : ${bookData["author"]} <br />
           </div>`;
 
-    if( bookData[ 'available' ] === 1 ) {
-      booksContent += 'The book is currently available for issue!';
+  if (bookData["available"] === 1) {
+    booksContent += "The book is currently available for issue!";
 
-      const issueBook = `
+    const issueBook = `
         <div id='issue-book' class="mt-20 " >
           <form id="book-issue-form" action="" target="_top">
             <input type="number" name="book-id" id="book-id" required class="py-2 px-4 border-2 w-6/12" min="30101" max="62704">
@@ -51,51 +53,57 @@ function getBookId( event ){
           </form>
         </div>`;
 
-        booksContent += issueBook;
-        leftColumn.innerHTML = booksContent;
-    } else {
-        booksContent += ' The book is currently issued and not available';
-        leftColumn.innerHTML = booksContent;
-    }
-
-    //leftColumn.innerHTML = booksContent;
-   bookIssueDetails( bookData["book_id"] );
+    booksContent += issueBook;
+    leftColumn.innerHTML = booksContent;
+  } else {
+    booksContent += " The book is currently issued and not available";
+    leftColumn.innerHTML = booksContent;
   }
+
+  //leftColumn.innerHTML = booksContent;
+  bookIssueDetails(bookData["book_id"]);
+}
 
 function handleError() {
   leftColumn.innerHTML = `<p>Unable to locate book in our records. Please check the ID</p>`;
 }
 
-bookSearchForm.addEventListener( 'submit', getBookId );
+bookSearchForm.addEventListener("submit", getBookId);
 
-function bookIssueDetails( bookID ) {
+function bookIssueDetails(bookID) {
   console.log(bookID);
-  const bookHistoryQuery = 'SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=' + bookID + ' ORDER BY doi DESC LIMIT 10;';
+  const bookHistoryQuery =
+    "SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=" +
+    bookID +
+    " ORDER BY doi DESC LIMIT 10;";
 
-  console.log( bookHistoryQuery );
+  console.log(bookHistoryQuery);
 
- getQueryData(bookHistoryQuery)
+  getQueryData(bookHistoryQuery)
     .then((results) => {
-      renderBookHistory( results );
+      renderBookHistory(results);
     })
-    .catch(( err ) =>
+    .catch((err) =>
       setImmediate(() => {
         handleError();
         throw err;
       })
     );
 
-    function renderBookHistory( bookHistory ) {
+  function renderBookHistory(bookHistory) {
+    if (bookHistory.length === 0) {
+      rightColumn.innerHTML = "<p> The book has no issue history</p>";
+      return;
+    }
 
-      if ( bookHistory.length === 0 ) {
-        rightColumn.innerHTML = '<p> The book has no issue history</p>';
-        return;
-      }
-      
-      const bookHistoryTable = document.createElement( 'table' );
-      //bookHistoryTable.className = 'table-auto';
-      bookHistoryTable.classList.add('border', 'border-collapse', 'border-gray-600');
-      bookHistoryTable.innerHTML = `
+    const bookHistoryTable = document.createElement("table");
+    //bookHistoryTable.className = 'table-auto';
+    bookHistoryTable.classList.add(
+      "border",
+      "border-collapse",
+      "border-gray-600"
+    );
+    bookHistoryTable.innerHTML = `
         <thead>
           <tr>
             <th class='border border-gray-600'>Issued on</th>
@@ -105,28 +113,71 @@ function bookIssueDetails( bookID ) {
         </thead>
       `;
 
-      bookHistory.forEach( ( record ) => {
-        console.log( record );
-        const row = document.createElement('tr');
-        
-        const doi = document.createElement('td');
-        doi.innerHTML = record[ 'doi' ] === null ? '----' : `${record[ 'doi' ].toDateString().substring(3)}`;
-        doi.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
-        row.appendChild( doi );
+    bookHistory.forEach((record) => {
+      const memberName = record["name"];
+      const memberID = record["member_id"].toString();
+      const dateOfIssue = record["doi"];
+      const dateOfReturn = record["dor"];
 
-        const dor = document.createElement('td');
-        dor.innerHTML =  record[ 'dor' ] === null ? '----' : `${record[ 'dor' ].toDateString().substring(3)}`;
-        dor.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
-        row.appendChild( dor );
+      const row = document.createElement("tr");
 
-        const memberDetails = document.createElement('td');
-        memberDetails.innerHTML = `${record["name"]} - ${record["member_id"]}`;
-        memberDetails.classList.add('border', 'border-solid', 'border-red-600', 'p-2', 'text-center');
-        row.appendChild( memberDetails );
+      function showDate( date ) { // Function to format date Cells
+        const dateEntry = document.createElement("td");
+        dateEntry.innerHTML =
+          date === null
+            ? "----"
+            : `${date.toDateString().substring(3)}`;
+        dateEntry.classList.add(
+          "border",
+          "border-solid",
+          "border-red-600",
+          "p-2",
+          "text-center"
+        );
+        row.appendChild(dateEntry);
+      }
 
-        bookHistoryTable.appendChild(row);
-      });
-      rightColumn.innerHTML = '';
-      rightColumn.appendChild(bookHistoryTable);
+      showDate( dateOfIssue );
+      showDate( dateOfReturn );
+
+      const memberDetails = document.createElement("td");
+      memberDetails.innerHTML = `${memberName} - ${getFlatNumberFromMemberID( memberID )}`;
+      memberDetails.classList.add(
+        "border",
+        "border-solid",
+        "border-red-600",
+        "p-2",
+        "text-center"
+      );
+      row.appendChild(memberDetails);
+
+      bookHistoryTable.appendChild(row);
+    });
+    rightColumn.innerHTML = "";
+    rightColumn.appendChild(bookHistoryTable);
+  }
+
+  function getFlatNumberFromMemberID(memberID) {// Converts member ID to wing and flat number. Eg. - D703)
+    if (memberID.length !== 5) return;
+
+    const wingNumber = memberID[0];
+    const flatNumber = memberID.split("").slice(1).join("");
+
+    switch (wingNumber) {
+      case "3":
+        return `A${flatNumber}`;
+
+      case "4":
+        return `B${flatNumber}`;
+
+      case "5":
+        return `C${flatNumber}`;
+
+      case "6":
+        return `D${flatNumber}`;
+
+      default:
+        return;
     }
+  }
 }
