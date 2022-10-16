@@ -27,4 +27,17 @@ function getQueryData( sqlQuery ) {
   });
 }
 
-module.exports = { connection, getQueryData, startConnection };
+function runDBQuery( sqlQuery, callback ){
+  getQueryData(sqlQuery)
+  .then((results) => {
+    callback(results);
+  })
+  .catch((err) =>
+    setImmediate(() => {
+      alert(' Unable to locate book / member in our record');
+      throw err;
+    })
+  );
+}
+
+module.exports = { connection, getQueryData, startConnection, runDBQuery };

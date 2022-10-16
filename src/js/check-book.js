@@ -1,48 +1,87 @@
-var { connection, getQueryData, startConnection } = require("./js/db");
+var { connection, getQueryData, startConnection, runDBQuery } = require("./js/db");
 
-const bookSearchForm = document.querySelector("form");
+const masterSearchForm = document.querySelector("#master-search-form");
 const leftColumn = document.querySelector("#left-column");
 const rightColumn = document.querySelector("#right-column");
 
-function getBookId(event) {
+function getSearchQuery(event) {
   event.preventDefault();
-  const bookNum = bookSearchForm.elements["book-id"].value;
+  const searchQuery = masterSearchForm.elements["book-or-member"].value;
 
   startConnection();
 
-  // Fetch book details either by Book code or Book ID.
+  // Detect if query is book ID / code or Member flat number
   let sqlQuery = "";
-  if (
-    bookNum.length === 5 &&
-    (bookNum[0].toUpperCase() === "G" || bookNum[0].toUpperCase() === "K")
-  ) {
-    sqlQuery =
-      'SELECT * FROM books WHERE book_code= "' + bookNum.toUpperCase() + '";';
-  } else sqlQuery = "SELECT * FROM books WHERE book_id=" + bookNum + ";";
+  if( // If the query is a member flat number
+      searchQuery.length === 5 &&
+      ['A','B','C','D'].includes( searchQuery[0].toUpperCase() )
+    ){
+      // convert flat number to member ID. eg. D0703 to 60703
+      const memberID = convertFlatToMemberID( searchQuery.toUpperCase );
 
-  getQueryData(sqlQuery)
-    .then((results) => {
-      displayBookResult(results[0]);
-    })
-    .catch((err) =>
-      setImmediate(() => {
-        handleError();
-        throw err;
-      })
-    );
+  } else if (
+   searchQuery.length === 5 &&
+     searchQuery[0].toUpperCase() === "G" || searchQuery[0].toUpperCase() === "K"
+     )
+   {
+     sqlQuery =
+       'SELECT * FROM books WHERE book_code= "' +
+       searchQuery.toUpperCase() +
+       '";';
+    runDBQuery( sqlQuery, displayBookResult );
+   } else {
+    sqlQuery = "SELECT * FROM books WHERE book_id=" + searchQuery + ";"
+    runDBQuery( sqlQuery, displayBookResult );
+  };
+}
+
+
+
+
+
+masterSearchForm.addEventListener( "submit", getSearchQuery );
+
+
+
+
+
+function getFlatNumberFromMemberID(memberID) {// Converts member ID to wing and flat number. Eg. - D703)
+  if (memberID.length !== 5) return;
+
+  const wingNumber = memberID[0];
+  const flatNumber = memberID.split("").slice(1).join("");
+
+  switch (wingNumber) {
+    case "3":
+      return `A${flatNumber}`;
+
+    case "4":
+      return `B${flatNumber}`;
+
+    case "5":
+      return `C${flatNumber}`;
+
+    case "6":
+      return `D${flatNumber}`;
+
+    default:
+      return;
+  }
 }
 
 function displayBookResult(bookData) {
+  console.log(bookData);
+  const leftColumn = document.querySelector("#left-column");
   let booksContent = `
           <div id="book-details" class='mb-5'>
             <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
-            Book ID  : ${bookData["book_id"]} <br />
-            Book Code: ${bookData["book_code"]} <br />
-            Title    : ${bookData["title"]} <br />
-            Author   : ${bookData["author"]} <br />
+            Book ID  : ${bookData[0]["book_id"]} <br />
+            Book Code: ${bookData[0]["book_code"]} <br />
+            Title    : ${bookData[0]["title"]} <br />
+            Author   : ${bookData[0]["author"]} <br />
           </div>`;
 
-  if (bookData["available"] === 1) {
+  if (bookData[0]["available"] === 1) {
     booksContent += "The book is currently available for issue!";
 
     const issueBook = `
@@ -60,15 +99,8 @@ function displayBookResult(bookData) {
     leftColumn.innerHTML = booksContent;
   }
 
-  //leftColumn.innerHTML = booksContent;
-  bookIssueDetails(bookData["book_id"]);
+  bookIssueDetails(bookData[0]["book_id"]);
 }
-
-function handleError() {
-  leftColumn.innerHTML = `<p>Unable to locate book in our records. Please check the ID</p>`;
-}
-
-bookSearchForm.addEventListener("submit", getBookId);
 
 function bookIssueDetails(bookID) {
   console.log(bookID);
@@ -79,105 +111,76 @@ function bookIssueDetails(bookID) {
 
   console.log(bookHistoryQuery);
 
-  getQueryData(bookHistoryQuery)
-    .then((results) => {
-      renderBookHistory(results);
-    })
-    .catch((err) =>
-      setImmediate(() => {
-        handleError();
-        throw err;
-      })
-    );
+  runDBQuery( bookHistoryQuery, renderBookHistory );
 
-  function renderBookHistory(bookHistory) {
-    if (bookHistory.length === 0) {
-      rightColumn.innerHTML = "<p> The book has no issue history</p>";
-      return;
-    }
+}
 
-    const bookHistoryTable = document.createElement("table");
-    //bookHistoryTable.className = 'table-auto';
-    bookHistoryTable.classList.add(
-      "border",
-      "border-collapse",
-      "border-gray-600"
-    );
-    bookHistoryTable.innerHTML = `
-        <thead>
-          <tr>
-            <th class='border border-gray-600'>Issued on</th>
-            <th class='border border-gray-600'>Returned</th>
-            <th class='border border-gray-600'>Member - Apartment</th>
-          </tr>
-        </thead>
-      `;
+function renderBookHistory(bookHistory) {
+  const rightColumn = document.querySelector("#right-column");
+  if (bookHistory.length === 0) {
+    rightColumn.innerHTML = "<p> The book has no issue history</p>";
+    return;
+  }
 
-    bookHistory.forEach((record) => {
-      const memberName = record["name"];
-      const memberID = record["member_id"].toString();
-      const dateOfIssue = record["doi"];
-      const dateOfReturn = record["dor"];
+  const bookHistoryTable = document.createElement("table");
+  //bookHistoryTable.className = 'table-auto';
+  bookHistoryTable.classList.add(
+    "border",
+    "border-collapse",
+    "border-gray-600"
+  );
+  bookHistoryTable.innerHTML = `
+      <thead>
+        <tr>
+          <th class='border border-gray-600'>Issued on</th>
+          <th class='border border-gray-600'>Returned</th>
+          <th class='border border-gray-600'>Member - Apartment</th>
+        </tr>
+      </thead>
+    `;
 
-      const row = document.createElement("tr");
+  bookHistory.forEach((record) => {
+    const memberName = record["name"];
+    const memberID = record["member_id"].toString();
+    const dateOfIssue = record["doi"];
+    const dateOfReturn = record["dor"];
 
-      function showDate( date ) { // Function to format date Cells
-        const dateEntry = document.createElement("td");
-        dateEntry.innerHTML =
-          date === null
-            ? "----"
-            : `${date.toDateString().substring(3)}`;
-        dateEntry.classList.add(
-          "border",
-          "border-solid",
-          "border-red-600",
-          "p-2",
-          "text-center"
-        );
-        row.appendChild(dateEntry);
-      }
+    const row = document.createElement("tr");
 
-      showDate( dateOfIssue );
-      showDate( dateOfReturn );
-
-      const memberDetails = document.createElement("td");
-      memberDetails.innerHTML = `${memberName} - ${getFlatNumberFromMemberID( memberID )}`;
-      memberDetails.classList.add(
+    function showDate( date ) { // Function to format date Cells
+      const dateEntry = document.createElement("td");
+      dateEntry.innerHTML =
+        date === null
+          ? "----"
+          : `${date.toDateString().substring(3)}`;
+      dateEntry.classList.add(
         "border",
         "border-solid",
         "border-red-600",
         "p-2",
         "text-center"
       );
-      row.appendChild(memberDetails);
-
-      bookHistoryTable.appendChild(row);
-    });
-    rightColumn.innerHTML = "";
-    rightColumn.appendChild(bookHistoryTable);
-  }
-
-  function getFlatNumberFromMemberID(memberID) {// Converts member ID to wing and flat number. Eg. - D703)
-    if (memberID.length !== 5) return;
-
-    const wingNumber = memberID[0];
-    const flatNumber = memberID.split("").slice(1).join("");
-
-    switch (wingNumber) {
-      case "3":
-        return `A${flatNumber}`;
-
-      case "4":
-        return `B${flatNumber}`;
-
-      case "5":
-        return `C${flatNumber}`;
-
-      case "6":
-        return `D${flatNumber}`;
-
-      default:
-        return;
+      row.appendChild(dateEntry);
     }
-  }
+
+    showDate( dateOfIssue );
+    showDate( dateOfReturn );
+
+    const memberDetails = document.createElement("td");
+    memberDetails.innerHTML = `${memberName} - ${getFlatNumberFromMemberID( memberID )}`;
+    memberDetails.classList.add(
+      "border",
+      "border-solid",
+      "border-red-600",
+      "p-2",
+      "text-center"
+    );
+    row.appendChild(memberDetails);
+
+    bookHistoryTable.appendChild(row);
+  });
+  rightColumn.innerHTML = "";
+  rightColumn.appendChild(bookHistoryTable);
 }
+
+module.exports ={ getFlatNumberFromMemberID };
