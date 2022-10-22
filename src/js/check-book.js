@@ -1,8 +1,6 @@
-var { connection, getQueryData, startConnection, runDBQuery } = require("./js/db");
+const { startConnection, runDBQuery } = require("./js/db");
 
 const masterSearchForm = document.querySelector("#master-search-form");
-const leftColumn = document.querySelector("#left-column");
-const rightColumn = document.querySelector("#right-column");
 
 function getSearchQuery(event) {
   event.preventDefault();
@@ -18,7 +16,6 @@ function getSearchQuery(event) {
     ){
       // convert flat number to member ID. eg. D0703 to 60703
       const memberID = convertFlatToMemberID( searchQuery.toUpperCase );
-
   } else if (
    searchQuery.length === 5 &&
      searchQuery[0].toUpperCase() === "G" || searchQuery[0].toUpperCase() === "K"
@@ -167,10 +164,14 @@ function renderBookHistory(bookHistory) {
       "p-2",
       "text-center"
     );
-    row.appendChild(memberDetails);
+    row.appendChild( memberDetails );
 
     bookHistoryTable.appendChild(row);
   });
   rightColumn.innerHTML = "";
-  rightColumn.appendChild(bookHistoryTable);
+  rightColumn.appendChild( bookHistoryTable );
+}
+
+function convertFlatToMemberID( flatNumber ) {
+
 }

@@ -8,7 +8,9 @@
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "lint": "eslint src/js/*",
+    "lint-fix": "eslint src/js/* --fix"
   },
   "author": "nagesh",
   "license": "MIT",
@@ -18,11 +20,23 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.66",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
     "@electron-forge/maker-zip": "^6.0.0-beta.66",
+    "@wordpress/eslint-plugin": "^13.4.0",
+    "@wordpress/prettier-config": "^2.3.0",
     "electron": "^20.2.0",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "7.2.0",
+    "eslint-import-resolver-typescript": "2.4.0",
+    "eslint-plugin-jest": "24.3.6",
+    "eslint-plugin-jsdoc": "^39.3.14",
+    "eslint-plugin-jsdoc-alignment": "0.0.5",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-react": "7.22.0",
+    "eslint-plugin-react-hooks": "4.2.0",
     "tailwindcss": "^3.1.8"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "eslint-webpack-plugin": "^3.2.0",
     "mysql": "^2.18.1"
   },
   "config": {
@@ -38,19 +52,21 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin", "linux"
+            "darwin",
+            "linux"
           ]
         },
         {
           "name": "@electron-forge/maker-deb",
           "config": {
             "options": {
-              "maintainer" : "Nagesh Pai",
-              "homepage"   : "https://nagpai.blog"
+              "maintainer": "Nagesh Pai",
+              "homepage": "https://nagpai.blog"
             }
           }
         }
       ]
     }
-  }
+  },
+  "prettier": "@wordpress/prettier-config"
 }
