@@ -28,6 +28,7 @@ function getQueryData(sqlQuery) {
 }
 
 function runDBQuery(sqlQuery, callback) {
+  console.log(sqlQuery);
 	getQueryData(sqlQuery)
 		.then((results) => {
 			callback(results);
