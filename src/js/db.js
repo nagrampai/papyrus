@@ -1,3 +1,5 @@
+'use strict';
+
 const mysql = require('mysql');
 const connection = mysql.createConnection({
 	host: 'localhost',
@@ -17,6 +19,7 @@ function startConnection() {
 
 function getQueryData(sqlQuery) {
 	return new Promise(function (resolve, reject) {
+		startConnection();
 		// eslint-disable-next-line no-unused-vars
 		connection.query(sqlQuery, function (error, results, fields) {
 			if (error) {
@@ -36,11 +39,13 @@ function runDBQuery(sqlQuery, callback) {
 		.catch((err) =>
 			setImmediate(() => {
 				// eslint-disable-next-line no-alert, no-undef
-				alert(' Unable to locate book / member in our record');
+				alert('Unable to locate book / member in our record');
 				throw err;
 			})
 		);
 }
 
-exports.startConnection = startConnection;
-exports.runDBQuery = runDBQuery;
+//exports.startConnection = startConnection;
+//exports.runDBQuery = runDBQuery;
+
+module.exports = { startConnection, runDBQuery };

@@ -1,3 +1,5 @@
+'use strict';
+console.log( module );
 /* eslint-disable no-alert */
 const { startConnection, runDBQuery } = require('./js/db');
 
@@ -20,7 +22,7 @@ function getSearchQueryHandler(event) {
 		return;
 	}
 
-	startConnection();
+	//startConnection();
 
 	// Detect if query is book ID / code or Member flat number
 	let sqlQuery = '';
@@ -487,3 +489,5 @@ function renderBookHistory(bookHistory) {
 	rightColumn.innerHTML = '';
 	rightColumn.appendChild(bookHistoryTable);
 }
+
+module.getMemberIDFromFlatNumber = getMemberIDFromFlatNumber;

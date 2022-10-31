@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href=".././dist/output.css">
+    <title>Papyrus @ Athena</title>
+  </head>
+  <body class ="p-8">
+    <h1 class="text-4xl text-white  w-11/12 m-auto bg-gray-700 text-center p-4 rounded-lg bg-opacity-50 font-extrabold mb-10">Papyrus @ Athena</h1>
+    <main class="w-7/12 m-auto">
+      <h1>Add or Edit Member</h1>
+      <form id="member-search-form" action="" target="_top" class="text-center my-10">
+        Flat number: <input type="search" name="member-flat-number-textbox" id="member-flat-number" placeholder="Member Flat number" required class="py-2 px-4 border-2 w-5/12" >
+       <input type="button" value="Search" class="group  w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5" id="check-member-button"><br>
+       Name:  <input type="text" name="member-name" id="member-name-textbox" class="py-2 px-4 border-2 w-5/12 m-5" value="">
+       <br>
+       <input type="submit" value="Save" class="group  w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5" id="add-edit-member-button" hidden="true">
+
+      </form>
+      <div id="result-container" class="border-solid border w-full">
+        results show here
+      </div>
+
+      <footer class="text-center fixed bottom-0 m">
+        <a href="./check-book.html"> Home</a>
+        <a href="./member-master.html">Member Master</a>
+      </footer>
+  
+      <script type="module" src="./js/member-master.js"></script>
+
+    </main>
+  </body>
+</html>
