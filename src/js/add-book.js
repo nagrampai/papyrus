@@ -17,10 +17,10 @@ function addBookHandler(e) {
     const bookGenre = bookFormData["genre-textbox"].value;
     const resultArea = document.getElementById('result-container');
 
-    const addBookQuery = `INSERT INTO library.books (books.title, books.author, books.shelf, books.genre) VALUES ('${bookTitle}', '${bookAuthor}', '${bookShelf}', '${bookGenre}');`;
+    const addBookQuery = `INSERT INTO library.books (books.title, books.author, books.shelf, books.genre, books.isbn ) VALUES ('${bookTitle}', '${bookAuthor}', '${bookShelf}', '${bookGenre}','${bookIsbn ? bookIsbn : 9999 }');`;
 
     runDBQuery(addBookQuery, (result) => {
-        resultArea.innerHTML = `<p>Book ID - ${result.insertId} added successfully</p>`;
+        resultArea.innerHTML = `<p>Book ID - <span class="text-red-500">${result.insertId} </span> added successfully</p>`;
 
     });
 }

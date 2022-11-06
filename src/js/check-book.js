@@ -99,20 +99,20 @@ function renderMemberBooks(memberBooks) {
 	memberBooksTable.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'w-full',
 		'mt-5'
 	);
 
 	const tableHeader = document.createElement('tr');
-	tableHeader.classList.add('border', 'border-solid', 'border-red-600');
+	tableHeader.classList.add('border', 'border-solid', 'border-black');
 
 	const doiHeader = document.createElement('th');
 	doiHeader.innerHTML = 'Issued';
 	doiHeader.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -123,7 +123,7 @@ function renderMemberBooks(memberBooks) {
 	dorHeader.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -134,7 +134,7 @@ function renderMemberBooks(memberBooks) {
 	bookCodeHeader.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -145,7 +145,7 @@ function renderMemberBooks(memberBooks) {
 	titleHeader.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -156,7 +156,7 @@ function renderMemberBooks(memberBooks) {
 	authorHeader.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -167,7 +167,7 @@ function renderMemberBooks(memberBooks) {
 	// add rows to member history table
 	memberBooks.forEach((book) => {
 		const row = document.createElement('tr');
-		row.classList.add('border', 'border-solid', 'border-red-600');
+		row.classList.add('border', 'border-solid', 'border-black');
 
 		showDate(book.doi, row);
 		showDate(book.dor, row);
@@ -177,7 +177,7 @@ function renderMemberBooks(memberBooks) {
 		bookCode.classList.add(
 			'border',
 			'border-solid',
-			'border-red-600',
+			'border-black',
 			'p-2',
 			'text-center'
 		);
@@ -188,7 +188,7 @@ function renderMemberBooks(memberBooks) {
 		title.classList.add(
 			'border',
 			'border-solid',
-			'border-red-600',
+			'border-black',
 			'p-2',
 			'text-center'
 		);
@@ -199,7 +199,7 @@ function renderMemberBooks(memberBooks) {
 		author.classList.add(
 			'border',
 			'border-solid',
-			'border-red-600',
+			'border-black',
 			'p-2',
 			'text-center'
 		);
@@ -218,7 +218,7 @@ function showDate(date, row) {
 	dateEntry.classList.add(
 		'border',
 		'border-solid',
-		'border-red-600',
+		'border-black',
 		'p-2',
 		'text-center'
 	);
@@ -299,7 +299,8 @@ function getMemberIDFromFlatNumber(flatNumber) {
 
 function displayBookResult(bookData) {
 	if (bookData[0] === undefined) {
-		alert( 'Whoopsie! Are you sure that\'s the correct code?' );
+		alert( `Whoopsie! Are you sure that\'s the correct code?
+				Try adding a new book / member?` );
 		masterSearchForm.reset();
 		return;
 	}
@@ -480,7 +481,7 @@ function renderBookHistory(bookHistory) {
 		memberDetails.classList.add(
 			'border',
 			'border-solid',
-			'border-red-600',
+			'border-black',
 			'p-2',
 			'text-center'
 		);
