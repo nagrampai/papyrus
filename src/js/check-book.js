@@ -210,6 +210,13 @@ function renderMemberBooks(memberBooks) {
 		rightColumn.appendChild(memberBooksTable);
 	});
 }
+
+/**
+ * Create a formatted date cell
+ * 
+ * @param {date} date 
+ * @param {node} row 
+ */
 function showDate(date, row) {
 	// Function to format date Cells
 	const dateEntry = document.createElement('td');
@@ -428,7 +435,7 @@ function bookIssueDetails(bookID) {
 	const bookHistoryQuery =
 		'SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=' +
 		bookID +
-		' ORDER BY doi DESC LIMIT 10;';
+		' ORDER BY transactions.transaction_id DESC LIMIT 10;';
 
 	runDBQuery(bookHistoryQuery, renderBookHistory);
 }

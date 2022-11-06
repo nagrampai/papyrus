@@ -6,8 +6,7 @@ const checkMemberButton = document.getElementById('check-member-button');
 const memberNameField = document.getElementById('member-name-textbox');
 const editMemberButton = document.getElementById('add-edit-member-button');
 const memberUpdateForm = document.getElementById('member-search-form');
-
-// if member does not exist, display message to add member.
+const messageArea = document.getElementById('message-container');
 
 checkMemberButton.addEventListener('click', checkMemberButtonHandler);
 
@@ -19,9 +18,9 @@ checkMemberButton.addEventListener('click', checkMemberButtonHandler);
 
 function checkMemberButtonHandler() {
 	const memberFlatNumber =
-		document.getElementById('member-flat-number').value;
+		document.getElementById('member-flat-number-textbox').value;
 
-    if ( memberFlatNumber.length < 5 ) {
+    if ( memberFlatNumber.length !== 5 ) {
         alert('Please enter a valid flat number');
         return;
     }
@@ -37,17 +36,33 @@ function checkMemberButtonHandler() {
      */
 
     function editMemberDetails(memberDetails) {
-        const memberName = memberDetails[0].name;
-        //const memberRemarks = memberDetails[0].remarks;
-        editMemberButton.hidden = false;
-        memberNameField.value = memberName;
-
-        
-        if (memberDetails.length > 0) {
+        if ( memberDetails.length > 0 ){ 
+            const memberName = memberDetails[0].name;
+            //const memberRemarks = memberDetails[0].remarks;
+            memberNameField.value = memberName;
+            editMemberButton.hidden = false;
             editMemberButton.addEventListener('click', editMemberHandler);
-       } else {
-           alert('Member does not exist. Feel free to add new member');
+        } else {
+            alert('Member not found, create new?');
+            editMemberButton.hidden = false;
+            editMemberButton.addEventListener('click', addMemberHandler);
         }
+    }
+
+     /**
+     * Add member details handler
+     * 
+     * @param {Object} memberDetails
+    */
+    function addMemberHandler(event){
+        event.preventDefault();
+
+        const newMemberName = memberNameField.value;
+        const addMemberQuery = `INSERT INTO library.members ( members.member_id, members.name) VALUES('${memberID}', '${newMemberName}' );`;
+        runDBQuery(addMemberQuery, () => {
+            alert('Member added!');
+            editMemberButton.hidden = true;
+        });
     }
 
     /**
@@ -61,7 +76,8 @@ function checkMemberButtonHandler() {
         if(window.confirm('Are you sure you want to update member details?')){
         const updateMemberQuery = `UPDATE library.members SET name = '${memberNameField.value}' WHERE member_id = '${ memberID.toString() }';`;
         runDBQuery(updateMemberQuery, () => {
-                memberUpdateForm.reset();
+                alert('Member details updated!');
+                editMemberButton.hidden = true;
             });
         }
     }
