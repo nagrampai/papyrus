@@ -45,7 +45,4 @@ function runDBQuery(sqlQuery, callback) {
 		);
 }
 
-//exports.startConnection = startConnection;
-//exports.runDBQuery = runDBQuery;
-
 module.exports = { startConnection, runDBQuery };

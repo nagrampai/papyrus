@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href=".././dist/output.css">
+    <title>Papyrus @ Athena</title>
+  </head>
+  <body class ="p-8">
+    <h1 class="text-4xl text-white  w-11/12 m-auto bg-gray-700 text-center p-4 rounded-lg bg-opacity-50 font-extrabold mb-10">Papyrus @ Athena</h1>
+    <main class="w-7/12 m-auto">
+      <h1>Add or Edit Book</h1>
+      <form id="add-book-form" action="" target="_top" class="text-center my-10">
+        Book Title<sup class="text-xl text-red-800 font-bold">*</sup>: <input type="text" name="book-title-textbox" id="book-title-textbox" placeholder="Book Title" required class="py-2 px-4 border-2 w-5/12" >
+        <br>
+        Author<sup>*</sup>:  <input type="text" name="book-author-textbox" id="book-author-textbox" class="py-2 px-4 border-2 w-5/12 m-5" required value="">
+        <br>
+        ISBN: <input type="text" name="isbn-textbox" id="isbn-textbox" class="py-2 px-4 border-2 w-5/12 m-5" value="">
+        <br>
+        Shelf: <input type="text" name="shelf-textbox" id="shelf-textbox" class="py-2 px-4 border-2 w-5/12 m-5" value="">
+        <br>
+        Genre: <input type="text" name="genre-textbox" id="genre-textbox" class="py-2 px-4 border-2 w-5/12 m-5" value="">
+        <br>
+        <input type="submit" value="Add Book" class="group  w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5" id="add-book-button" >
+
+      </form>
+      <div id="result-container" class="border-solid border w-full">
+      </div>
+
+      <footer class="text-center fixed bottom-0 m">
+        <a href="./check-book.html"> Home </a>|
+        <a href="./member-master.html">Add / View Members</a>|
+        <a href="./add-book.html">Add / View Books</a>
+      </footer>
+  
+      <script type="module" src="./js/add-book.js"></script>
+
+    </main>
+  </body>
+</html>

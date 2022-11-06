@@ -20,7 +20,6 @@ checkMemberButton.addEventListener('click', checkMemberButtonHandler);
 function checkMemberButtonHandler() {
 	const memberFlatNumber =
 		document.getElementById('member-flat-number').value;
-        console.log(`Member ID - ${memberFlatNumber}`);
 
     if ( memberFlatNumber.length < 5 ) {
         alert('Please enter a valid flat number');
@@ -29,7 +28,6 @@ function checkMemberButtonHandler() {
     const memberID = getMemberIDFromFlatNumber(memberFlatNumber);
 
 	const sqlQuery = `SELECT * FROM members WHERE member_id = ${memberID}`;
-    console.log(`query: ${sqlQuery}`);
 	runDBQuery(sqlQuery, editMemberDetails);
 
     /**

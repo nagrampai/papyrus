@@ -1,5 +1,4 @@
 'use strict';
-console.log( module );
 /* eslint-disable no-alert */
 const { startConnection, runDBQuery } = require('./js/db');
 
@@ -64,7 +63,7 @@ function getSearchQueryHandler(event) {
 function displayMemberDetails(memberData) {
 	if (memberData.length === 0) {
 		// eslint-disable-next-line no-alert, no-undef
-		alert('Member not found');
+		alert('Member not found. Is that an Athenian?!');
 		return;
 	}
 
@@ -84,6 +83,7 @@ function displayMemberDetails(memberData) {
 		' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
 		memberData[0].member_id +
 		' ORDER BY doi DESC LIMIT 10;';
+
 
 	runDBQuery(memberBooksQuery, renderMemberBooks);
 }
@@ -298,15 +298,22 @@ function getMemberIDFromFlatNumber(flatNumber) {
  */
 
 function displayBookResult(bookData) {
+	if (bookData[0] === undefined) {
+		alert( 'Whoopsie! Are you sure that\'s the correct code?' );
+		masterSearchForm.reset();
+		return;
+	}
 	const leftColumn = document.querySelector('#left-column');
 	let booksContent = `
           <div id="book-details" class='mb-5'>
-            <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
-            Book ID  : ${bookData[0].book_id} <br />
-            Book Code: ${bookData[0].book_code} <br />
-            Title    : ${bookData[0].title} <br />
-            Author   : ${bookData[0].author} <br />
+		  <h2 class='text-2xl font-bold mb-5'>Book Details</h2>
+		  Book ID  : ${bookData[0].book_id} <br />
+		  Book Code: ${bookData[0].book_code} <br />
+		  Title    : ${bookData[0].title} <br />
+		  Author   : ${bookData[0].author} <br />
           </div>`;
+		  
+	bookIssueDetails(bookData[0].book_id);
 
 	if (bookData[0].available === 1) {
 		booksContent += 'The book is currently available for issue!';
@@ -369,8 +376,7 @@ function displayBookResult(bookData) {
       <form id='return-book-form' >
         <input type="text" name="member-flat-number" id="member-flat-number" placeholder="Confirm flat no." required class="py-2 px-4 border-2 w-8/12  " min="30101" max="62704">
         <input type="submit" value="Return" class="group  w-3/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">
-      <form>
-    `;
+      <form>`;
 
 		booksContent += returnForm;
 		leftColumn.innerHTML = booksContent;
@@ -387,13 +393,12 @@ function displayBookResult(bookData) {
 			e.preventDefault();
 			const submittedFlatNumber =
 				returnBookForm.elements['member-flat-number'].value;
-
-			const memberID = getMemberIDFromFlatNumber(submittedFlatNumber);
+			const submittedMemberID = getMemberIDFromFlatNumber(submittedFlatNumber);
 			const bookID = bookData[0].book_id;
 
 			const returnBookQuery = `UPDATE books, transactions
       SET books.available = 1, transactions.dor = NOW()
-      WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID} AND transactions.member_id = ${memberID} AND transactions.dor IS NULL;`;
+      WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID} AND transactions.member_id = ${submittedMemberID} AND transactions.dor IS NULL;`;
 
 			runDBQuery(returnBookQuery, (result) => {
 				if (result === null) {
@@ -410,10 +415,7 @@ function displayBookResult(bookData) {
 		}
 	}
 
-	bookIssueDetails(bookData[0].book_id);
 }
-
-masterSearchForm.addEventListener('submit', getSearchQueryHandler);
 
 /**
  * Query for book issue history
