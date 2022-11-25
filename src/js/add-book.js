@@ -3,7 +3,7 @@
 const { runDBQuery } = require('./js/db');
 
 const addBookForm = document.getElementById('add-book-form');
-
+const bookSubmitButton = document.getElementById('book-submit-button');
 
 addBookForm.addEventListener('submit', addBookHandler);
 
@@ -20,7 +20,7 @@ function addBookHandler(e) {
     const addBookQuery = `INSERT INTO library.books (books.title, books.author, books.shelf, books.genre, books.isbn ) VALUES ('${bookTitle}', '${bookAuthor}', '${bookShelf}', '${bookGenre}','${bookIsbn ? bookIsbn : 9999 }');`;
 
     runDBQuery(addBookQuery, (result) => {
+        bookSubmitButton.remove();
         resultArea.innerHTML = `<p>Book ID - <span class="text-red-500">${result.insertId} </span> added successfully</p>`;
-
     });
 }
