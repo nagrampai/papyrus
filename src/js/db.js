@@ -1,14 +1,17 @@
 'use strict';
 
+require('dotenv').config();
 const mysql = require('mysql');
+
 const connection = mysql.createConnection({
 	host: 'localhost',
-	user: 'athenalibrary',
-	password: 'athena@123$',
+	user: process.env.DB_USERNAME,
+	password: process.env.DB_PWD,
 	database: 'library',
 });
 
 function startConnection() {
+	console.log(process.env);
 	// Open a DB connection if there is none already open.
 	if (connection.state === 'disconnected') {
 		connection.connect((error) => {
