@@ -11,7 +11,7 @@ const createWindow = () => {
 		},
 	});
 
-	win.loadFile('src/check-book.html');
+	win.loadFile('src/index.html');
 };
 
 app.whenReady().then(() => {

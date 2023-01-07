@@ -13,7 +13,6 @@ masterSearchForm.addEventListener('submit', getSearchQueryHandler);
  *
  * @param {Object} event
  */
-
 function getSearchQueryHandler(event) {
   event.preventDefault();
   const masterSearchTerm = masterSearchForm.elements['book-or-member'].value;

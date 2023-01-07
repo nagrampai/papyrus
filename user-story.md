@@ -8,6 +8,8 @@
 6. [] The app should allow editing existing books
 7. [] The app should check if the member is within quota for books, or show an indication
 8. [] The app should show list of overdue borrowers
+9. [] The app should record name of librarian taking return
+10. [] Collect contact number / email of member
 
 
 ## Other notes / Constraints
