@@ -2,6 +2,7 @@ const { runDBQuery } = require('./js/db');
 const { getMemberIDFromFlatNumber } = require('./js/members');
 
 const checkMemberButton = document.getElementById('check-member-button');
+const memberFlatNumberField = document.getElementById( 'member-flat-number-textbox');
 const memberNameField = document.getElementById('member-name-textbox');
 const editMemberButton = document.getElementById('add-edit-member-button');
 
@@ -14,10 +15,7 @@ checkMemberButton.addEventListener('click', checkMemberButtonHandler);
  */
 
 function checkMemberButtonHandler() {
-    console.log('clicked');
-	const memberFlatNumber = document.getElementById(
-		'member-flat-number-textbox'
-	).value;
+	const memberFlatNumber = memberFlatNumberField.value;
 
 	if (memberFlatNumber.length !== 5) {
 		alert('Please enter a valid flat number');
@@ -40,11 +38,13 @@ function checkMemberButtonHandler() {
 			//const memberRemarks = memberDetails[0].remarks;
 			memberNameField.value = memberName;
 			editMemberButton.hidden = false;
+            editMemberButton.disabled = false;
 			editMemberButton.addEventListener('click', editMemberHandler);
 		} else {
             memberNameField.value = '';
 			alert('Member not found, create new?');
 			editMemberButton.hidden = false;
+            editMemberButton.disabled = false;
 			editMemberButton.addEventListener('click', addMemberHandler);
 		}
 	}
@@ -63,6 +63,8 @@ function checkMemberButtonHandler() {
 			alert('Member added!');
 			editMemberButton.hidden = true;
             editMemberButton.disabled = true;
+            memberNameField.value = '';
+            memberFlatNumberField.value = '';
 		});
 	}
 
