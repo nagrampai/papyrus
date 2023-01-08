@@ -1,0 +1,21 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+
+  // Controls the default value for attributes when completion is accepted.
+  //  - doublequotes: Attribute value is set to "".
+  //  - singlequotes: Attribute value is set to ''.
+  //  - empty: Attribute value is not set.
+  "html.completion.attributeDefaultValue": "singlequotes",
+
+  // Preferred quote style to use for Quick Fixes.
+  //  - auto: Infer quote type from existing code
+  //  - single: Always use single quotes: `'`
+  //  - double: Always use double quotes: `"`
+  "javascript.preferences.quoteStyle": "single",
+
+  // Use single quotes instead of double quotes in JSX
+  "prettier.jsxSingleQuote": true,
+}
