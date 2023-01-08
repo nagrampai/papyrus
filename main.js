@@ -1,7 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow } = require( 'electron' );
 
 const createWindow = () => {
-    const win = new BrowserWindow({
+    const win = new BrowserWindow( {
         width: 1100,
         height: 800,
         webPreferences: {
@@ -9,23 +9,23 @@ const createWindow = () => {
             contextIsolation: false,
             enableRemoteModule: true,
         },
-    });
+    } );
 
-    win.loadFile('src/check-book.html');
+    win.loadFile( 'src/check-book.html' );
 };
 
-app.whenReady().then(() => {
+app.whenReady().then( () => {
     createWindow();
 
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
+    app.on( 'activate', () => {
+        if ( BrowserWindow.getAllWindows().length === 0 ) {
             createWindow();
         }
-    });
-});
+    } );
+} );
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+app.on( 'window-all-closed', () => {
+    if ( process.platform !== 'darwin' ) {
         app.quit();
     }
-});
+} );
