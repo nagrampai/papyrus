@@ -1,4 +1,4 @@
-const { runDBQuery } = require('./db');
+const { runDBQuery } = require( './db' );
 
 /**
  * Query and display member details
@@ -6,15 +6,15 @@ const { runDBQuery } = require('./db');
  * @param { Array } memberData
  */
 
-function displayMemberDetails(memberData) {
-	if (memberData.length === 0) {
-		// eslint-disable-next-line no-alert, no-undef
-		alert('Member not found. Is that an Athenian?!');
-		return;
-	}
+function displayMemberDetails( memberData ) {
+    if ( memberData.length === 0 ) {
+        // eslint-disable-next-line no-alert, no-undef
+        alert( 'Member not found. Is that an Athenian?!' );
+        return;
+    }
 
-	const leftColumn = document.querySelector('#left-column');
-	const memberDetails = `
+    const leftColumn = document.querySelector( '#left-column' );
+    const memberDetails = `
     <div id='member-details' class='mb-5'>
       <h2 class='text-2xl font-bold mb-5'>Member Details</h2>
       Member ID: ${memberData[0].member_id} <br />
@@ -22,15 +22,15 @@ function displayMemberDetails(memberData) {
       Remarks  : ${memberData[0].remarks} <br />
     </div>`;
 
-	leftColumn.innerHTML = memberDetails;
+    leftColumn.innerHTML = memberDetails;
 
-	const memberBooksQuery =
-		'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
-		' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
-		memberData[0].member_id +
-		' ORDER BY doi DESC LIMIT 10;';
+    const memberBooksQuery =
+        'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
+        ' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
+        memberData[0].member_id +
+        ' ORDER BY doi DESC LIMIT 10;';
 
-	runDBQuery(memberBooksQuery, renderMemberBooks);
+    runDBQuery( memberBooksQuery, renderMemberBooks );
 }
 
 /**
@@ -38,122 +38,122 @@ function displayMemberDetails(memberData) {
  *
  * @param {Array} memberBooks
  */
-function renderMemberBooks(memberBooks) {
-	const rightColumn = document.querySelector('#right-column');
-	const memberBooksTable = document.createElement('table');
-	memberBooksTable.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'w-full',
-		'mt-5'
-	);
+function renderMemberBooks( memberBooks ) {
+    const rightColumn = document.querySelector( '#right-column' );
+    const memberBooksTable = document.createElement( 'table' );
+    memberBooksTable.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'w-full',
+        'mt-5'
+    );
 
-	const tableHeader = document.createElement('tr');
-	tableHeader.classList.add('border', 'border-solid', 'border-black');
+    const tableHeader = document.createElement( 'tr' );
+    tableHeader.classList.add( 'border', 'border-solid', 'border-black' );
 
-	const doiHeader = document.createElement('th');
-	doiHeader.innerHTML = 'Issued';
-	doiHeader.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	tableHeader.appendChild(doiHeader);
+    const doiHeader = document.createElement( 'th' );
+    doiHeader.innerHTML = 'Issued';
+    doiHeader.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    tableHeader.appendChild( doiHeader );
 
-	const dorHeader = document.createElement('th');
-	dorHeader.innerHTML = 'Returned';
-	dorHeader.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	tableHeader.appendChild(dorHeader);
+    const dorHeader = document.createElement( 'th' );
+    dorHeader.innerHTML = 'Returned';
+    dorHeader.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    tableHeader.appendChild( dorHeader );
 
-	const bookCodeHeader = document.createElement('th');
-	bookCodeHeader.innerHTML = 'Book Code';
-	bookCodeHeader.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	tableHeader.appendChild(bookCodeHeader);
+    const bookCodeHeader = document.createElement( 'th' );
+    bookCodeHeader.innerHTML = 'Book Code';
+    bookCodeHeader.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    tableHeader.appendChild( bookCodeHeader );
 
-	const titleHeader = document.createElement('th');
-	titleHeader.innerHTML = 'Title';
-	titleHeader.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	tableHeader.appendChild(titleHeader);
+    const titleHeader = document.createElement( 'th' );
+    titleHeader.innerHTML = 'Title';
+    titleHeader.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    tableHeader.appendChild( titleHeader );
 
-	const authorHeader = document.createElement('th');
-	authorHeader.innerHTML = 'Author';
-	authorHeader.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	tableHeader.appendChild(authorHeader);
+    const authorHeader = document.createElement( 'th' );
+    authorHeader.innerHTML = 'Author';
+    authorHeader.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    tableHeader.appendChild( authorHeader );
 
-	memberBooksTable.appendChild(tableHeader);
+    memberBooksTable.appendChild( tableHeader );
 
-	// add rows to member history table
-	memberBooks.forEach((book) => {
-		const row = document.createElement('tr');
-		row.classList.add('border', 'border-solid', 'border-black');
+    // add rows to member history table
+    memberBooks.forEach( ( book ) => {
+        const row = document.createElement( 'tr' );
+        row.classList.add( 'border', 'border-solid', 'border-black' );
 
-		showDate(book.doi, row);
-		showDate(book.dor, row);
+        showDate( book.doi, row );
+        showDate( book.dor, row );
 
-		const bookCode = document.createElement('td');
-		bookCode.innerHTML = book.book_id;
-		bookCode.classList.add(
-			'border',
-			'border-solid',
-			'border-black',
-			'p-2',
-			'text-center'
-		);
-		row.appendChild(bookCode);
+        const bookCode = document.createElement( 'td' );
+        bookCode.innerHTML = book.book_id;
+        bookCode.classList.add(
+            'border',
+            'border-solid',
+            'border-black',
+            'p-2',
+            'text-center'
+        );
+        row.appendChild( bookCode );
 
-		const title = document.createElement('td');
-		title.innerHTML = book.title;
-		title.classList.add(
-			'border',
-			'border-solid',
-			'border-black',
-			'p-2',
-			'text-center'
-		);
-		row.appendChild(title);
+        const title = document.createElement( 'td' );
+        title.innerHTML = book.title;
+        title.classList.add(
+            'border',
+            'border-solid',
+            'border-black',
+            'p-2',
+            'text-center'
+        );
+        row.appendChild( title );
 
-		const author = document.createElement('td');
-		author.innerHTML = book.author;
-		author.classList.add(
-			'border',
-			'border-solid',
-			'border-black',
-			'p-2',
-			'text-center'
-		);
-		row.appendChild(author);
+        const author = document.createElement( 'td' );
+        author.innerHTML = book.author;
+        author.classList.add(
+            'border',
+            'border-solid',
+            'border-black',
+            'p-2',
+            'text-center'
+        );
+        row.appendChild( author );
 
-		memberBooksTable.appendChild(row);
-		rightColumn.innerHTML = '';
-		rightColumn.appendChild(memberBooksTable);
-	});
+        memberBooksTable.appendChild( row );
+        rightColumn.innerHTML = '';
+        rightColumn.appendChild( memberBooksTable );
+    } );
 }
 
 /**
@@ -162,19 +162,19 @@ function renderMemberBooks(memberBooks) {
  * @param {Date}        date
  * @param {HTMLElement} row
  */
-function showDate(date, row) {
-	// Function to format date Cells
-	const dateEntry = document.createElement('td');
-	dateEntry.innerHTML =
-		date === null ? '----' : `${date.toDateString().substring(3)}`;
-	dateEntry.classList.add(
-		'border',
-		'border-solid',
-		'border-black',
-		'p-2',
-		'text-center'
-	);
-	row.appendChild(dateEntry);
+function showDate( date, row ) {
+    // Function to format date Cells
+    const dateEntry = document.createElement( 'td' );
+    dateEntry.innerHTML =
+        date === null ? '----' : `${date.toDateString().substring( 3 )}`;
+    dateEntry.classList.add(
+        'border',
+        'border-solid',
+        'border-black',
+        'p-2',
+        'text-center'
+    );
+    row.appendChild( dateEntry );
 }
 
 /**
@@ -184,31 +184,31 @@ function showDate(date, row) {
  * @return {string} Flat number - eg D0703
  */
 
-function getFlatNumberFromMemberID(memberID) {
-	// Converts member ID to wing and flat number. Eg. - D703)
-	if (memberID.length !== 5) {
-		return;
-	}
+function getFlatNumberFromMemberID( memberID ) {
+    // Converts member ID to wing and flat number. Eg. - D703)
+    if ( memberID.length !== 5 ) {
+        return;
+    }
 
-	const wingNumber = memberID[0];
-	const flatNumber = memberID.split('').slice(1).join('');
+    const wingNumber = memberID[0];
+    const flatNumber = memberID.split( '' ).slice( 1 ).join( '' );
 
-	switch (wingNumber) {
-		case '3':
-		return `A${flatNumber}`;
+    switch ( wingNumber ) {
+        case '3':
+            return `A${flatNumber}`;
 
-		case '4':
-		return `B${flatNumber}`;
+        case '4':
+            return `B${flatNumber}`;
 
-		case '5':
-		return `C${flatNumber}`;
+        case '5':
+            return `C${flatNumber}`;
 
-		case '6':
-		return `D${flatNumber}`;
+        case '6':
+            return `D${flatNumber}`;
 
-		default:
-		return null;
-	}
+        default:
+            return null;
+    }
 }
 
 /**
@@ -218,31 +218,31 @@ function getFlatNumberFromMemberID(memberID) {
  * @return {number} member ID
  */
 
-function getMemberIDFromFlatNumber(flatNumber) {
-	// Converts wing and flat number to member ID. Eg. - D0703 to 60703
-	if (flatNumber.length !== 5) {
-		return;
-	}
+function getMemberIDFromFlatNumber( flatNumber ) {
+    // Converts wing and flat number to member ID. Eg. - D0703 to 60703
+    if ( flatNumber.length !== 5 ) {
+        return;
+    }
 
-	const wingNumber = flatNumber[0].toUpperCase();
-	const flatNumberOnly = flatNumber.split('').slice(1).join('');
+    const wingNumber = flatNumber[0].toUpperCase();
+    const flatNumberOnly = flatNumber.split( '' ).slice( 1 ).join( '' );
 
-	switch (wingNumber) {
-		case 'A':
-		return Number(`3${flatNumberOnly}`);
+    switch ( wingNumber ) {
+        case 'A':
+            return Number( `3${flatNumberOnly}` );
 
-		case 'B':
-		return Number(`4${flatNumberOnly}`);
+        case 'B':
+            return Number( `4${flatNumberOnly}` );
 
-		case 'C':
-		return Number(`5${flatNumberOnly}`);
+        case 'C':
+            return Number( `5${flatNumberOnly}` );
 
-		case 'D':
-		return Number(`6${flatNumberOnly}`);
+        case 'D':
+            return Number( `6${flatNumberOnly}` );
 
-		default:
-		return null;
-	}
+        default:
+            return null;
+    }
 }
 
 exports.getMemberIDFromFlatNumber = getMemberIDFromFlatNumber;
