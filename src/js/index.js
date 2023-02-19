@@ -1,9 +1,9 @@
-const { runDBQuery } = require( './js/db' );
+const { runDBQuery } = require( '../js/db' );
 const {
     displayMemberDetails,
     getMemberIDFromFlatNumber,
-} = require( './js/members' );
-const { displayBookResult } = require( './js/display-books' );
+} = require( '../js/members' );
+const { displayBookResult } = require( '../js/display-books' );
 
 const masterSearchForm = document.querySelector( '#master-search-form' );
 masterSearchForm.addEventListener( 'submit', getSearchQueryHandler );

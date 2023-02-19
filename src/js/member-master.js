@@ -1,5 +1,5 @@
-const { runDBQuery } = require( './js/db' );
-const { getMemberIDFromFlatNumber } = require( './js/members' );
+const { runDBQuery } = require( '../js/db' );
+const { getMemberIDFromFlatNumber } = require( '../js/members' );
 
 const checkMemberButton = document.getElementById( 'check-member-button' );
 const memberFlatNumberField = document.getElementById(

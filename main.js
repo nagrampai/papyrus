@@ -11,7 +11,7 @@ const createWindow = () => {
         },
     } );
 
-    win.loadFile( 'src/index.html' );
+    win.loadFile( 'src/html/index.html' );
 };
 
 app.whenReady().then( () => {
