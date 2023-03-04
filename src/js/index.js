@@ -1,4 +1,4 @@
-const { runDBQuery } = require( '../js/db' );
+const { runDBQuery } = require( '../js/db.js' );
 const {
     displayMemberDetails,
     getMemberIDFromFlatNumber,

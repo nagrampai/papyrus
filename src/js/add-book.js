@@ -1,4 +1,4 @@
-const { runDBQuery } = require( './js/db' );
+const { runDBQuery } = require( '../js/db' );
 
 const addBookForm = document.getElementById( 'add-book-form' );
 const bookSubmitButton = document.getElementById( 'book-submit-button' );
