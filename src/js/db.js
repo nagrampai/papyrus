@@ -48,6 +48,4 @@ function runDBQuery( sqlQuery, callback ) {
         );
 }
 
-//module.exports = { runDBQuery };
-
 exports.runDBQuery = runDBQuery;

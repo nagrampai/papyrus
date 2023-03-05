@@ -39,16 +39,13 @@ function checkMemberButtonHandler() {
             const memberName = memberDetails[0].name;
             //const memberRemarks = memberDetails[0].remarks;
             memberNameField.value = memberName;
-            editMemberButton.hidden = false;
-            editMemberButton.disabled = false;
-            editMemberButton.addEventListener( 'click', editMemberHandler );
         } else {
             memberNameField.value = '';
             alert( 'Member not found, create new?' );
-            editMemberButton.hidden = false;
-            editMemberButton.disabled = false;
-            editMemberButton.addEventListener( 'click', addMemberHandler );
         }
+        editMemberButton.hidden = false;
+        editMemberButton.disabled = false;
+        editMemberButton.addEventListener( 'click', addMemberHandler );
     }
 
     /**

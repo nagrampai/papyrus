@@ -1,6 +1,7 @@
 const { runDBQuery } = require( '../../js/db.js' );
 const { getFlatNumberFromMemberID } = require( '../../js/members' );
 const { exportCSV } = require( '../../js/utils/csv-export' );
+const { createTableRow } = require( '../../js/utils/create-table-row' );
 
 const outstandingBooksTable = document.getElementById( 'outstanding-books-table' );
 
@@ -43,10 +44,7 @@ function renderOutstandingBooks( ){
     const tableHeaderRows = [ 'Flat Number', 'Member Name', 'Book Title', 'Book Author', 'Issued on', 'Overdue (days)'];
 
     tableHeaderRows.forEach( ( headerName ) => {
-        const tableHeader = document.createElement( 'th' );
-        tableHeader.innerHTML = headerName;
-        tableHeader.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );   
-        tableBody.appendChild( tableHeader );
+        createTableRow( headerName, tableBody, true );   
     } );
 
     const outstandingBooksQuery = `
@@ -80,35 +78,15 @@ function renderOutstandingBooks( ){
             const tableRow = document.createElement( 'tr' );
             tableRow.classList.add( 'border', 'border-solid', 'border-black' );
 
-            const flatNumber = document.createElement( 'td' );
-            flatNumber.innerHTML = getFlatNumberFromMemberID( row.member_id.toString() );
-            flatNumber.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( flatNumber );
+            //convert every field to string with required value
+            row[ 'member_id' ] = getFlatNumberFromMemberID( row[ 'member_id' ].toString() );
+            row[ 'doi' ] = row[ 'doi' ] === null ? '----' : `${ row[ 'doi' ].toDateString().substring( 3 )}`;
 
-            const memberName = document.createElement( 'td' );
-            memberName.innerHTML = row.name;
-            memberName.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( memberName );
+            const outstandingBookFields = [ 'member_id', 'name', 'title', 'author', 'doi', 'overdue' ];
 
-            const bookTitle = document.createElement( 'td' );
-            bookTitle.innerHTML = row.title;
-            bookTitle.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( bookTitle );
-
-            const bookAuthor = document.createElement( 'td' );
-            bookAuthor.innerHTML = row.author;
-            bookAuthor.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( bookAuthor );
-
-            const issuedOn = document.createElement( 'td' );
-            issuedOn.innerHTML = row.doi.toDateString();
-            issuedOn.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( issuedOn );
-
-            const overdue = document.createElement( 'td' );
-            overdue.innerHTML = row.overdue;
-            overdue.classList.add( 'border', 'border-solid', 'border-black', 'p-2', 'text-center' );
-            tableRow.appendChild( overdue );
+            outstandingBookFields.forEach( ( field ) => {
+                createTableRow( row[ field ], tableRow, false );
+            } );
 
             tableBody.appendChild( tableRow );
         } );
