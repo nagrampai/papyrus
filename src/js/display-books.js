@@ -18,7 +18,7 @@ const masterSearchForm = document.querySelector( '#master-search-form' );
  */
 
 function displayBookResult( bookData ) {
-    if ( bookData[0] === undefined ) {
+    if ( ! bookData[0] ) {
         alert( `Whoopsie! Are you sure that's the correct code?
 				Try adding a new book / member?` );
         masterSearchForm.reset();
@@ -120,7 +120,7 @@ function displayBookResult( bookData ) {
 
             const returnBookQuery = `UPDATE books, transactions
       SET books.available = 1, transactions.dor = NOW()
-      WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID} AND transactions.member_id = ${submittedMemberID} AND transactions.dor IS NULL;`;
+      WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
 
             runDBQuery( returnBookQuery, ( result ) => {
                 if ( result === null ) {

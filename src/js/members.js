@@ -1,4 +1,5 @@
 const { runDBQuery } = require( './db' );
+const { createTableRow } = require( './utils/create-table-row' );
 
 /**
  * Query and display member details
@@ -39,6 +40,14 @@ function displayMemberDetails( memberData ) {
  * @param {Array} memberBooks
  */
 function renderMemberBooks( memberBooks ) {
+    const memberBooksTableHeaders = [
+        'Issued',
+        'Returned',
+        'Book Code',
+        'Title',
+        'Author',
+    ];
+
     const rightColumn = document.querySelector( '#right-column' );
     const memberBooksTable = document.createElement( 'table' );
     memberBooksTable.classList.add(
@@ -51,61 +60,10 @@ function renderMemberBooks( memberBooks ) {
 
     const tableHeader = document.createElement( 'tr' );
     tableHeader.classList.add( 'border', 'border-solid', 'border-black' );
-
-    const doiHeader = document.createElement( 'th' );
-    doiHeader.innerHTML = 'Issued';
-    doiHeader.classList.add(
-        'border',
-        'border-solid',
-        'border-black',
-        'p-2',
-        'text-center'
-    );
-    tableHeader.appendChild( doiHeader );
-
-    const dorHeader = document.createElement( 'th' );
-    dorHeader.innerHTML = 'Returned';
-    dorHeader.classList.add(
-        'border',
-        'border-solid',
-        'border-black',
-        'p-2',
-        'text-center'
-    );
-    tableHeader.appendChild( dorHeader );
-
-    const bookCodeHeader = document.createElement( 'th' );
-    bookCodeHeader.innerHTML = 'Book Code';
-    bookCodeHeader.classList.add(
-        'border',
-        'border-solid',
-        'border-black',
-        'p-2',
-        'text-center'
-    );
-    tableHeader.appendChild( bookCodeHeader );
-
-    const titleHeader = document.createElement( 'th' );
-    titleHeader.innerHTML = 'Title';
-    titleHeader.classList.add(
-        'border',
-        'border-solid',
-        'border-black',
-        'p-2',
-        'text-center'
-    );
-    tableHeader.appendChild( titleHeader );
-
-    const authorHeader = document.createElement( 'th' );
-    authorHeader.innerHTML = 'Author';
-    authorHeader.classList.add(
-        'border',
-        'border-solid',
-        'border-black',
-        'p-2',
-        'text-center'
-    );
-    tableHeader.appendChild( authorHeader );
+    
+    memberBooksTableHeaders.forEach( ( headerName ) => {
+        createTableRow( headerName, tableHeader, true );
+    } );
 
     memberBooksTable.appendChild( tableHeader );
 
@@ -117,38 +75,10 @@ function renderMemberBooks( memberBooks ) {
         showDate( book.doi, row );
         showDate( book.dor, row );
 
-        const bookCode = document.createElement( 'td' );
-        bookCode.innerHTML = book.book_id;
-        bookCode.classList.add(
-            'border',
-            'border-solid',
-            'border-black',
-            'p-2',
-            'text-center'
-        );
-        row.appendChild( bookCode );
-
-        const title = document.createElement( 'td' );
-        title.innerHTML = book.title;
-        title.classList.add(
-            'border',
-            'border-solid',
-            'border-black',
-            'p-2',
-            'text-center'
-        );
-        row.appendChild( title );
-
-        const author = document.createElement( 'td' );
-        author.innerHTML = book.author;
-        author.classList.add(
-            'border',
-            'border-solid',
-            'border-black',
-            'p-2',
-            'text-center'
-        );
-        row.appendChild( author );
+        const bookColumnNames = [ 'book_id', 'title', 'author' ];
+        bookColumnNames.forEach( ( columnName ) => {
+            createTableRow( book[columnName], row );
+        } );
 
         memberBooksTable.appendChild( row );
         rightColumn.innerHTML = '';

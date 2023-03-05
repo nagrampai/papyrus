@@ -7,18 +7,25 @@
     </head>
     <body class="p-8">
         <h1
-            class="text-4xl text-white w-11/12 m-auto bg-gray-700 text-center p-4 rounded-lg bg-opacity-50 font-extrabold mb-10"
+            class="text-4xl text-white w-11/12 m-auto bg-gray-700 text-center p-4 rounded-lg bg-opacity-50 font-extrabold mb-2"
         >
             Outstanding Books Report
         </h1>
         <main class="w-11/12 m-auto">
-            <div class="issued-books">Issued Books: <span class='issued-books-count'></span></div>
-            <div class="overdue-books">Overdue Books: <span class='overdue-books-count'></span></div>
-           <a href="#" class='csv-export text-sm text-blue-700' hidden>Export to file</a>
-            <div id="outstanding-books-table">Outstanding Books: </div>
+            <div id="outstanding-header" class="flex items-center justify-center gap-x-12 ">
+                <div id="left-column" class="">
+                    <div class="issued-books">
+                        <h2 class='text-2xl font-bold'>Issued</h2> <span class='issued-books-count text-xl'></span></div>
+                </div>
+                <div id="right-column" class="">
+                    <div class="overdue-books"><h2 class=' text-2xl font-bold'>Overdue</h2> <span class='overdue-books-count text-xl'></span></div>
+                </div>
+            </div>
+           <a href="#" class='csv-export text-sm text-blue-700 text-right' hidden>Export to file</a>
+           <div id="outstanding-books-table"></div>
         </main>
 
-        <footer class="flex justify-center fixed bottom-5 w-full">
+        <footer class="flex justify-center  p-2 w-full">
             <a
                 href="../index.html"
                 class="text-blue-700 font-bold text-xl px-5"
