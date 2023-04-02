@@ -1,5 +1,6 @@
 {
-    "extends": ["prettier"],
+    "extends": ["prettier",
+    "plugin:@woocommerce/eslint-plugin/recommended"],
 
     "parserOptions": {
         "ecmaVersion": "latest"
