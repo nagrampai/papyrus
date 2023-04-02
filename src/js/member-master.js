@@ -26,7 +26,7 @@ function checkMemberButtonHandler() {
     const memberID = getMemberIDFromFlatNumber( memberFlatNumber );
 
     const sqlQuery = `SELECT * FROM members WHERE member_id = ${memberID}`;
-    runDBQuery( sqlQuery, editMemberDetails );
+    runDBQuery( sqlQuery, checkMemberDetails );
 
     /**
      * Display member details if member exists in DB or allow to add member
@@ -34,18 +34,23 @@ function checkMemberButtonHandler() {
      * @param {Object} memberDetails
      */
 
-    function editMemberDetails( memberDetails ) {
+    function checkMemberDetails( memberDetails ) {
         if ( memberDetails.length > 0 ) {
             const memberName = memberDetails[0].name;
             //const memberRemarks = memberDetails[0].remarks;
             memberNameField.value = memberName;
+            checkMemberButton.hidden = true;
+            editMemberButton.hidden = false;
+            editMemberButton.disabled = false;
+            editMemberButton.addEventListener( 'click', editMemberHandler );
         } else {
             memberNameField.value = '';
             alert( 'Member not found, create new?' );
+            checkMemberButton.hidden = true;
+            editMemberButton.hidden = false;
+            editMemberButton.disabled = false;
+            editMemberButton.addEventListener( 'click', addMemberHandler );
         }
-        editMemberButton.hidden = false;
-        editMemberButton.disabled = false;
-        editMemberButton.addEventListener( 'click', addMemberHandler );
     }
 
     /**
