@@ -11,7 +11,7 @@
 function exportCSV( data, headers, filename = 'data' ) {
 
     let csv = headers.join( ',' ) + '\n';
-    console.log( data );
+   
     data.forEach( ( row ) => {
         let rowArray = Object.values( row );
 
