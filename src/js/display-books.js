@@ -66,14 +66,6 @@ function displayBookResult( bookData ) {
                 return;
             }
 
-            const updateBookAvailablilityQuery = `UPDATE books
-       SET  books.available = 0
-       WHERE books.book_id = ${bookID};`;
-
-            runDBQuery( updateBookAvailablilityQuery, () => {
-                // eslint-disable-next-line no-console
-                console.log( 'Book availability updated' );
-            } );
 
             const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
 
@@ -84,6 +76,15 @@ function displayBookResult( bookData ) {
                     return;
                 }
                 // eslint-disable-next-line no-undef
+                const updateBookAvailablilityQuery = `UPDATE books
+                SET  books.available = 0
+                WHERE books.book_id = ${bookID};`;
+         
+                runDBQuery( updateBookAvailablilityQuery, () => {
+                    // eslint-disable-next-line no-console
+                    console.log( 'Book availability updated' );
+                } );
+
                 alert( 'Book issued successfully' );
                 const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
                 runDBQuery( refreshBookStatusQuery, displayBookResult );
@@ -91,12 +92,9 @@ function displayBookResult( bookData ) {
         }
     } else {
         booksContent += `The book is currently issued and not available <br/><br/>
+        <button id="return-book" type="submit" value="Return" class="group  w-9/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">Return Book</button>
     <br/>`;
 
-        const returnButton = `
-        <button id="return-book" type="submit" value="Return" class="group  w-9/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">Return Book</button>`;
-
-        booksContent += returnButton;
         leftColumn.innerHTML = booksContent;
 
         const returnBookButton = document.querySelector( '#return-book' );
