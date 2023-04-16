@@ -42,7 +42,7 @@ function displayBookResult( bookData ) {
         const issueBook = `
         <div id='issue-book' class="mt-5 " >
           <form id="book-issue-form" action="" target="_top">
-            <input type="text" name="issue-flat-number" id="issue-flat-number" placeholder="Flat No." required class="py-2 px-4 border-2 w-6/12" min="30101" max="62704">
+            <input type="text" name="issue-flat-number" id="issue-flat-number" placeholder="Flat No." required class="py-2 px-4 border-2 w-6/12" min="30101" max="62704" maxlength="5">
             <input type="submit" value="Issue Book" class="group  w-4/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
           </form>
         </div>`;
@@ -93,17 +93,14 @@ function displayBookResult( bookData ) {
         booksContent += `The book is currently issued and not available <br/><br/>
     <b> Record Return: </b><br/>`;
 
-        const returnForm = `
-      <form id='return-book-form' >
-        <input type="text" name="member-flat-number" id="member-flat-number" placeholder="Confirm flat no." required class="py-2 px-4 border-2 w-8/12  " min="30101" max="62704">
-        <input type="submit" value="Return" class="group  w-3/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">
-      <form>`;
+        const returnButton = `
+        <button id="return-book" type="submit" value="Return" class="group  w-9/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">Return Book</button>`;
 
-        booksContent += returnForm;
+        booksContent += returnButton;
         leftColumn.innerHTML = booksContent;
 
-        const returnBookForm = document.querySelector( '#return-book-form' );
-        returnBookForm.addEventListener( 'submit', returnBookHandler );
+        const returnBookButton = document.querySelector( '#return-book' );
+        returnBookButton.addEventListener( 'click', returnBookHandler );
 
         /**
          * Handle return book form submission
@@ -112,10 +109,6 @@ function displayBookResult( bookData ) {
          */
         function returnBookHandler( e ) {
             e.preventDefault();
-            const submittedFlatNumber =
-                returnBookForm.elements['member-flat-number'].value;
-            const submittedMemberID =
-                getMemberIDFromFlatNumber( submittedFlatNumber );
             const bookID = bookData[0].book_id;
 
             const returnBookQuery = `UPDATE books, transactions
