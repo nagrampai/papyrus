@@ -1,6 +1,3 @@
-/* eslint-disable no-tabs */
-/* eslint-disable no-alert */
-
 const { getQueryData } = require( './db' );
 const {
     getFlatNumberFromMemberID,
@@ -11,7 +8,6 @@ const Swal = require( 'sweetalert2' );
 
 const masterSearchForm = document.querySelector( '#master-search-form' );
 
-/* eslint-disable one-var */
 /**
  * Parses details of books from raw data received from DB query
  *
@@ -62,7 +58,6 @@ function displayBookResult( bookData ) {
             const bookID = bookData[0].book_id;
 
             if ( memberID === null ) {
-                // eslint-disable-next-line no-undef
                 Swal.fire( {
                     icon: 'error',
                     title: 'Oops...',
@@ -201,7 +196,7 @@ function renderBookHistory( bookHistory ) {
     }
 
     const bookHistoryTable = document.createElement( 'table' );
-    //bookHistoryTable.className = 'table-auto';
+    
     bookHistoryTable.classList.add(
         'border',
         'border-collapse',
