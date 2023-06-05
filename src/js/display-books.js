@@ -1,12 +1,13 @@
 /* eslint-disable no-tabs */
 /* eslint-disable no-alert */
 
-const { runDBQuery } = require( './db' );
+const { getQueryData } = require( './db' );
 const {
     getFlatNumberFromMemberID,
     getMemberIDFromFlatNumber,
     showDate,
 } = require( './members' );
+const Swal = require( 'sweetalert2' );
 
 const masterSearchForm = document.querySelector( '#master-search-form' );
 
@@ -62,34 +63,54 @@ function displayBookResult( bookData ) {
 
             if ( memberID === null ) {
                 // eslint-disable-next-line no-undef
-                alert( 'Invalid Flat Number' );
+                Swal.fire( {
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid Flat Number',
+                    button: 'OK',
+                } );
                 return;
             }
 
 
             const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
-
-            runDBQuery( issueBookQuery, ( result ) => {
-                if ( result === null ) {
-                    // eslint-disable-next-line no-undef
-                    alert( 'Could not issue book' );
-                    return;
-                }
-                // eslint-disable-next-line no-undef
-                const updateBookAvailablilityQuery = `UPDATE books
+            const updateBookAvailablilityQuery = `UPDATE books
                 SET  books.available = 0
                 WHERE books.book_id = ${bookID};`;
-         
-                runDBQuery( updateBookAvailablilityQuery, () => {
-                    // eslint-disable-next-line no-console
-                    console.log( 'Book availability updated' );
-                } );
-
-                alert( 'Book issued successfully' );
-                const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-                runDBQuery( refreshBookStatusQuery, displayBookResult );
-            } );
+            const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+            
+            async function issueBook() {
+                try {
+                        const result1 = await getQueryData(issueBookQuery);
+                        console.log(result1);
+                    
+                        const result2 = await getQueryData(updateBookAvailablilityQuery);
+                        console.log(result2);
+                    
+                        const result3 = await getQueryData(refreshBookStatusQuery);
+                        console.log(result3);
+                
+                        displayBookResult(result3);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Book Issued',
+                            text: `Book issued to ${flatNumber}`,
+                            button: 'OK',
+                        });
+                } catch (error) {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Could not issue book',
+                        text: 'Please recheck the flat number (Alphabet + 4 digits), or if the member exists in Papyrus.',
+                        button: 'OK',
+                    });
+                    throw error;    
+                }
+              }
+              issueBook();
         }
+
     } else {
         booksContent += `The book is currently issued and not available <br/><br/>
         <button id="return-book" type="submit" value="Return" class="group  w-9/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">Return Book</button>
@@ -110,21 +131,38 @@ function displayBookResult( bookData ) {
             const bookID = bookData[0].book_id;
 
             const returnBookQuery = `UPDATE books, transactions
-      SET books.available = 1, transactions.dor = NOW()
-      WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
+            SET books.available = 1, transactions.dor = NOW()
+            WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
+            const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
 
-            runDBQuery( returnBookQuery, ( result ) => {
-                if ( result === null ) {
-                    // eslint-disable-next-line no-undef
-                    alert( 'Error returning book' );
-                    return;
+            async function returnBook() {
+                try {
+                    const result1 = await getQueryData(returnBookQuery);
+                    console.log(result1);
+                
+                    //const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+                    const result2 = await getQueryData(refreshBookStatusQuery);
+                    console.log(result2);
+                
+                    displayBookResult(result2);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Book Returned',
+                        text: 'Book returned successfully',
+                        button: 'OK',
+                    });
+                } catch (error) {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Could not return book',
+                        button: 'OK',
+                    });
+                    throw error;    
                 }
-                // eslint-disable-next-line no-undef
-                alert( 'Book returned successfully' );
-
-                const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-                runDBQuery( refreshBookStatusQuery, displayBookResult );
-            } );
+            }
+            returnBook();
         }
     }
 }
@@ -141,7 +179,12 @@ function bookIssueDetails( bookID ) {
         bookID +
         ' ORDER BY transactions.transaction_id DESC LIMIT 10;';
 
-    runDBQuery( bookHistoryQuery, renderBookHistory );
+    getQueryData( bookHistoryQuery ).then( ( result ) => {
+        console.log( 'promises and lies');
+        renderBookHistory( result );
+    } ).catch( ( err ) => {
+        throw err;
+    } );
 }
 
 /**

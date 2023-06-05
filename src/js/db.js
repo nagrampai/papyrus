@@ -10,17 +10,17 @@ const connection = mysql.createConnection( {
 
 function startConnection() {
     // Open a DB connection if there is none already open.
-    if ( connection.state === 'disconnected' ) {
-        connection.connect( ( error ) => {
-            if ( error ) {
-                throw error;
-            }
-        } );
+    try {
+      if (connection.state === 'disconnected') {
+        connection.connect();
+      }
+    } catch (error) {
+      throw error;
     }
-}
+  }
+  
 
 function getQueryData( sqlQuery ) {
-    console.log( connection.state );
     return new Promise( function ( resolve, reject ) {
         startConnection();
         // eslint-disable-next-line no-unused-vars
@@ -49,3 +49,4 @@ function runDBQuery( sqlQuery, callback ) {
 }
 
 exports.runDBQuery = runDBQuery;
+exports.getQueryData = getQueryData;
