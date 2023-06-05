@@ -1,5 +1,5 @@
 const { default: Swal } = require('sweetalert2');
-const { runDBQuery, getQueryData } = require( '../js/db' );
+const { getQueryData } = require( '../js/db' );
 
 const addBookForm = document.getElementById( 'add-book-form' );
 const bookSubmitButton = document.getElementById( 'book-submit-button' );
