@@ -1,4 +1,5 @@
-const { runDBQuery } = require( '../js/db' );
+const { default: Swal } = require('sweetalert2');
+const { runDBQuery, getQueryData } = require( '../js/db' );
 
 const addBookForm = document.getElementById( 'add-book-form' );
 const bookSubmitButton = document.getElementById( 'book-submit-button' );
@@ -19,8 +20,18 @@ function addBookHandler( e ) {
         bookIsbn ? bookIsbn : 9999
     }');`;
 
-    runDBQuery( addBookQuery, ( result ) => {
-        bookSubmitButton.remove();
-        resultArea.innerHTML = `<p>Book ID - <span class="text-red-500">${result.insertId} </span> added successfully</p>`;
-    } );
+    getQueryData( addBookQuery )
+        .then( ( result ) => {
+            bookSubmitButton.remove();
+            resultArea.innerHTML = `<p>Book ID - <span class="text-red-500">${result.insertId} </span> added successfully</p>`;
+        } )
+        .catch( ( err ) => {
+            Swal.fire( {
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Unable to add book',
+                button: 'OK',
+            } );
+            throw err;
+        } );
 }
