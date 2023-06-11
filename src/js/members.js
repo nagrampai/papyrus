@@ -77,23 +77,30 @@ function renderMemberBooks( memberBooks ) {
 
     memberBooksTable.appendChild( tableHeader );
 
+    // In member history show issued books first
+    const memberIssuedBooks = memberBooks.filter( ( book ) => book.dor === null );  
+    const memberReturnedBooks = memberBooks.filter( ( book ) => book.dor !== null );    
     // add rows to member history table
-    memberBooks.forEach( ( book ) => {
-        const row = document.createElement( 'tr' );
-        row.classList.add( 'border', 'border-solid', 'border-black' );
+   function addBooksToTable( Books ){ 
+        Books.forEach( ( book ) => {
+            const row = document.createElement( 'tr' );
+            row.classList.add( 'border', 'border-solid', 'border-black' );
 
-        showDate( book.doi, row );
-        showDate( book.dor, row );
+            showDate( book.doi, row );
+            showDate( book.dor, row );
 
-        const bookColumnNames = [ 'book_id', 'title', 'author' ];
-        bookColumnNames.forEach( ( columnName ) => {
-            createTableRow( book[columnName], row );
+            const bookColumnNames = [ 'book_id', 'title', 'author' ];
+            bookColumnNames.forEach( ( columnName ) => {
+                createTableRow( book[columnName], row );
+            } );
+
+            memberBooksTable.appendChild( row );
+            rightColumn.innerHTML = '';
+            rightColumn.appendChild( memberBooksTable );
         } );
-
-        memberBooksTable.appendChild( row );
-        rightColumn.innerHTML = '';
-        rightColumn.appendChild( memberBooksTable );
-    } );
+    }
+    addBooksToTable( memberIssuedBooks );
+    addBooksToTable( memberReturnedBooks );
 }
 
 /**

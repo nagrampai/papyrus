@@ -94,7 +94,7 @@ function displayBookResult( bookData ) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Book Issued',
-                            text: `Book issued to ${flatNumber}`,
+                            text: `Book issued to ${flatNumber.toUpperCase()}`,
                             button: 'OK',
                         });
                 } catch (error) {
@@ -173,7 +173,7 @@ function bookIssueDetails( bookID ) {
     const bookHistoryQuery =
         'SELECT transactions.doi, transactions.dor, members.name, members.member_id FROM transactions INNER JOIN members ON transactions.member_id=members.member_id WHERE transactions.book_id=' +
         bookID +
-        ' ORDER BY transactions.transaction_id DESC LIMIT 10;';
+        ' ORDER BY transactions.transaction_id DESC LIMIT 20;';
 
     getQueryData( bookHistoryQuery ).then( ( result ) => {
         renderBookHistory( result );
@@ -200,7 +200,8 @@ function renderBookHistory( bookHistory ) {
     bookHistoryTable.classList.add(
         'border',
         'border-collapse',
-        'border-gray-600'
+        'border-gray-600',
+        'mt-5',
     );
     bookHistoryTable.innerHTML = `
       <thead>
