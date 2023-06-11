@@ -1,4 +1,5 @@
-const { runDBQuery } = require( './db' );
+const { default: Swal } = require('sweetalert2');
+const { getQueryData } = require( './db' );
 const { createTableRow } = require( './utils/create-table-row' );
 
 /**
@@ -9,8 +10,13 @@ const { createTableRow } = require( './utils/create-table-row' );
 
 function displayMemberDetails( memberData ) {
     if ( memberData.length === 0 ) {
-        // eslint-disable-next-line no-alert, no-undef
-        alert( 'Member not found. Is that an Athenian?!' );
+        Swal.fire( {
+            icon: 'error',
+            title: 'Member not found',
+            text: 'Is that an Athenian?!',
+            button: 'OK',
+        } );
+
         return;
     }
 
@@ -29,9 +35,13 @@ function displayMemberDetails( memberData ) {
         'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
         ' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
         memberData[0].member_id +
-        ' ORDER BY doi DESC LIMIT 10;';
+        ' ORDER BY doi DESC LIMIT 30;';
 
-    runDBQuery( memberBooksQuery, renderMemberBooks );
+    getQueryData( memberBooksQuery ).then( ( result ) => {
+        renderMemberBooks( result );
+    } ).catch( ( err ) => {
+        throw err;
+    } );
 }
 
 /**

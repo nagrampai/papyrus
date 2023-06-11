@@ -41,7 +41,7 @@ function renderOutstandingBooks( ){
     const tableBody = document.createElement( 'table' );
     tableBody.classList.add( 'border', 'border-solid', 'border-black', 'w-full', 'mt-5' );
 
-    const tableHeaderRows = [ 'Flat Number', 'Member Name', 'Book Title', 'Book Author', 'Issued on', 'Overdue (days)'];
+    const tableHeaderRows = [ 'Flat Number', 'Member Name', 'Book Title', 'Book Author', 'Book ID', 'Issued on', 'Overdue (days)'];
 
     tableHeaderRows.forEach( ( headerName ) => {
         createTableRow( headerName, tableBody, true );   
@@ -53,6 +53,7 @@ function renderOutstandingBooks( ){
             library.members.name, 
             library.books.title, 
             library.books.author, 
+            library.books.book_id,
             library.transactions.doi, 
             ( DATEDIFF(CURRENT_DATE(), library.transactions.doi ) - 15 ) AS overdue
         FROM 
@@ -82,7 +83,7 @@ function renderOutstandingBooks( ){
             row[ 'member_id' ] = getFlatNumberFromMemberID( row[ 'member_id' ].toString() );
             row[ 'doi' ] = row[ 'doi' ] === null ? '----' : `${ row[ 'doi' ].toDateString().substring( 3 )}`;
 
-            const outstandingBookFields = [ 'member_id', 'name', 'title', 'author', 'doi', 'overdue' ];
+            const outstandingBookFields = [ 'member_id', 'name', 'title', 'author', 'book_id', 'doi', 'overdue' ];
 
             outstandingBookFields.forEach( ( field ) => {
                 createTableRow( row[ field ], tableRow, false );

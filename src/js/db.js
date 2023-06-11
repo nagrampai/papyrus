@@ -1,5 +1,6 @@
 require( 'dotenv' ).config();
 const mysql = require( 'mysql' );
+const { default: Swal } = require('sweetalert2');
 
 const connection = mysql.createConnection( {
     host: 'localhost',
@@ -33,6 +34,7 @@ function getQueryData( sqlQuery ) {
     } );
 }
 
+/* function runDBQuery to be deprecated soon */
 function runDBQuery( sqlQuery, callback ) {
     console.log( sqlQuery );
     getQueryData( sqlQuery )
@@ -41,8 +43,12 @@ function runDBQuery( sqlQuery, callback ) {
         } )
         .catch( ( err ) =>
             setImmediate( () => {
-                // eslint-disable-next-line no-alert, no-undef
-                alert( 'Unable to locate book / member in our record' );
+                Swal.fire( {
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unable to locate book / member in our record',
+                    button: 'OK',
+                } );
                 throw err;
             } )
         );

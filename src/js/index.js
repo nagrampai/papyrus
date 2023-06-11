@@ -1,9 +1,10 @@
-const { runDBQuery } = require( '../js/db.js' );
+const { getQueryData } = require( '../js/db.js' );
 const {
     displayMemberDetails,
     getMemberIDFromFlatNumber,
 } = require( '../js/members' );
 const { displayBookResult } = require( '../js/display-books' );
+const { default: Swal } = require('sweetalert2');
 
 const masterSearchForm = document.querySelector( '#master-search-form' );
 masterSearchForm.addEventListener( 'submit', getSearchQueryHandler );
@@ -19,8 +20,13 @@ function getSearchQueryHandler( event ) {
     const masterSearchTerm = masterSearchForm.elements['book-or-member'].value;
 
     if ( masterSearchTerm.length > 5 ) {
-        // eslint-disable-next-line no-alert, no-undef
-        alert( 'Please enter a valid book ID or member ID' );
+        Swal.fire( {
+            icon: 'error',
+            title: 'Do I know you?',
+            text: 'Please enter a valid book ID or member ID',
+            button: 'OK',
+        } );
+
         return;
     }
 
@@ -36,7 +42,20 @@ function getSearchQueryHandler( event ) {
             masterSearchTerm.toUpperCase()
         );
         sqlQuery = `SELECT * FROM members WHERE member_id=${memberID};`;
-        runDBQuery( sqlQuery, displayMemberDetails );
+
+        getQueryData( sqlQuery )
+        .then( ( result ) => {
+            displayMemberDetails(result);
+        } )
+        .catch( ( err ) => {
+            Swal.fire( {
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Unable to find member',
+                button: 'OK',
+            } );
+            throw err;
+        } );
     } else if (
         // Check for legacy book ID that starts with G or K.
         ( masterSearchTerm.length === 5 &&
@@ -47,10 +66,38 @@ function getSearchQueryHandler( event ) {
             'SELECT * FROM books WHERE book_code= "' +
             masterSearchTerm.toUpperCase() +
             '";';
-        runDBQuery( sqlQuery, displayBookResult );
+        getQueryData( sqlQuery )
+        .then( ( result ) => {
+            console.log(result);
+            displayBookResult(result);
+        } )
+        .catch( ( err ) => {
+            console.log(err);
+            Swal.fire( {
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Unable to find book',
+                button: 'OK',
+            } );
+            throw err;
+        } );
     } else {
         sqlQuery =
             'SELECT * FROM books WHERE book_id=' + masterSearchTerm + ';';
-        runDBQuery( sqlQuery, displayBookResult );
+        console.log(sqlQuery);
+        getQueryData( sqlQuery )
+        .then( ( result ) => {
+            console.log(result);
+            displayBookResult(result);
+        } )
+        .catch( ( err ) => {
+            Swal.fire( {
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Unable to find book',
+                button: 'OK',
+            } );
+            throw err;
+        } );
     }
 }

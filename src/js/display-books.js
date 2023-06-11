@@ -15,9 +15,15 @@ const masterSearchForm = document.querySelector( '#master-search-form' );
  */
 
 function displayBookResult( bookData ) {
+    console.log( bookData );
     if ( ! bookData[0] ) {
-        alert( `Whoopsie! Are you sure that's the correct code?
-				Try adding a new book / member?` );
+        Swal.fire( {
+            icon: 'error',
+            title: 'No Book found',
+            text: 'Please check the code / ID and try again',
+            button: 'OK',
+        } );
+
         masterSearchForm.reset();
         return;
     }
@@ -67,7 +73,6 @@ function displayBookResult( bookData ) {
                 return;
             }
 
-
             const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
             const updateBookAvailablilityQuery = `UPDATE books
                 SET  books.available = 0
@@ -116,28 +121,25 @@ function displayBookResult( bookData ) {
         const returnBookButton = document.querySelector( '#return-book' );
         returnBookButton.addEventListener( 'click', returnBookHandler );
 
+        
         /**
          * Handle return book form submission
-         *
-         * @param {Object} e
-         */
-        function returnBookHandler( e ) {
-            e.preventDefault();
-            const bookID = bookData[0].book_id;
-
-            const returnBookQuery = `UPDATE books, transactions
-            SET books.available = 1, transactions.dor = NOW()
-            WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
-            const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-
+        *
+        * @param {Object} e
+        */
+       function returnBookHandler( e ) {
+           e.preventDefault();
+           const bookID = bookData[0].book_id;
+           const returnBookQuery = `UPDATE books, transactions
+           SET books.available = 1, transactions.dor = NOW()
+           WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
+           const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+           
             async function returnBook() {
                 try {
                     const result1 = await getQueryData(returnBookQuery);
-                    console.log(result1);
                 
-                    //const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-                    const result2 = await getQueryData(refreshBookStatusQuery);
-                    console.log(result2);
+                    const result2 = await getQueryData(refreshBookStatusQuery)
                 
                     displayBookResult(result2);
                     Swal.fire({
@@ -147,7 +149,6 @@ function displayBookResult( bookData ) {
                         button: 'OK',
                     });
                 } catch (error) {
-                    console.log(error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -175,7 +176,6 @@ function bookIssueDetails( bookID ) {
         ' ORDER BY transactions.transaction_id DESC LIMIT 10;';
 
     getQueryData( bookHistoryQuery ).then( ( result ) => {
-        console.log( 'promises and lies');
         renderBookHistory( result );
     } ).catch( ( err ) => {
         throw err;
@@ -212,6 +212,7 @@ function renderBookHistory( bookHistory ) {
       </thead>
     `;
 
+    
     bookHistory.forEach( ( record ) => {
         const memberName = record.name;
         const memberID = record.member_id.toString();

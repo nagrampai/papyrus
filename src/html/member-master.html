@@ -14,7 +14,7 @@
         <main class="w-7/12 m-auto">
             <div
                 id="message-container"
-                class="text-center w-full mt-8 text-2xl"
+                class="text-center w-full mt-8 text-large"
             >Please enter flat number and click the search button to check if member already exists. If no member is found you can add the name and save.</div>
             <form
                 id="member-search-form"
@@ -38,6 +38,13 @@
                     class="group w-2/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5"
                     id="check-member-button"
                 /><br />
+            </form>
+
+            <form
+                id="member-details-form"
+                hidden="true"
+                action=""
+            >
                 Name:
                 <input
                     type="text"
@@ -45,6 +52,16 @@
                     id="member-name-textbox"
                     class="py-2 px-4 border-2 w-5/12 m-5"
                     value=""
+                    required
+                /><br />
+                Mobile:
+                <input
+                    type="number"
+                    name="member-mobile"
+                    id="member-mobile-textbox"
+                    class="py-2 px-4 border-2 w-5/12 m-5"
+                    value=""
+                    required
                 />
                 <br />
                 <input
