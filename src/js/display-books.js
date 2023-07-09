@@ -45,8 +45,8 @@ function displayBookResult( bookData ) {
         const issueBook = `
         <div id='issue-book' class="mt-5 " >
           <form id="book-issue-form" action="" target="_top">
-            <input type="text" name="issue-flat-number" id="issue-flat-number" placeholder="Flat No." required class="py-2 px-4 border-2 w-6/12" min="30101" max="62704" maxlength="5">
-            <input type="submit" value="Issue Book" class="group  w-4/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-5">
+            <input type="text" name="issue-flat-number" id="issue-flat-number" placeholder="Flat No." required class="py-2 px-4 border-2 w-9/12" min="30101" max="62704" maxlength="5"><br />
+            <input type="submit" value="Issue Book" class="group  w-6/12 justify-center rounded-md border border-transparent bg-indigo-600 py-1 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-2">
           </form>
         </div>`;
 
