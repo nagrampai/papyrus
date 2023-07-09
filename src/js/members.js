@@ -19,13 +19,14 @@ function displayMemberDetails( memberData ) {
 
         return;
     }
-
+    console.log( memberData[0] );
     const leftColumn = document.querySelector( '#left-column' );
     const memberDetails = `
     <div id='member-details' class='mb-5'>
       <h2 class='text-2xl font-bold mb-5'>Member Details</h2>
       Member ID: ${memberData[0].member_id} <br />
       Name     : ${memberData[0].name} <br />
+      Mobile   : ${memberData[0].mobile} <br />
       Remarks  : ${memberData[0].remarks} <br />
     </div>`;
 
