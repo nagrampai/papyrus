@@ -68,11 +68,9 @@ function getSearchQueryHandler( event ) {
             '";';
         getQueryData( sqlQuery )
         .then( ( result ) => {
-            console.log(result);
             displayBookResult(result);
         } )
         .catch( ( err ) => {
-            console.log(err);
             Swal.fire( {
                 icon: 'error',
                 title: 'Oops...',
@@ -84,10 +82,8 @@ function getSearchQueryHandler( event ) {
     } else {
         sqlQuery =
             'SELECT * FROM books WHERE book_id=' + masterSearchTerm + ';';
-        console.log(sqlQuery);
         getQueryData( sqlQuery )
         .then( ( result ) => {
-            console.log(result);
             displayBookResult(result);
         } )
         .catch( ( err ) => {

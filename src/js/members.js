@@ -19,7 +19,7 @@ function displayMemberDetails( memberData ) {
 
         return;
     }
-    console.log( memberData[0] );
+   
     const leftColumn = document.querySelector( '#left-column' );
     const memberDetails = `
     <div id='member-details' class='mb-5'>
@@ -30,7 +30,6 @@ function displayMemberDetails( memberData ) {
       Remarks  : ${memberData[0].remarks} <br />
     </div>`;
 
-    // create issue book form
     const issueBook = `
     <div id='issue-book' class="mt-5 " >
         <form id="book-issue-form" action="" target="_top">
@@ -41,13 +40,20 @@ function displayMemberDetails( memberData ) {
     leftColumn.innerHTML = memberDetails + issueBook;
 
     const issueBookForm = document.querySelector( '#book-issue-form' );
-    issueBookForm.addEventListener( 'submit', issueBookHandler );
-    
+    issueBookForm.addEventListener( 'submit', ( event ) => {
+        event.preventDefault();
+        const bookID = document.querySelector( '#issue-book-code' ).value;
+        issueMemberBookHandler( event, memberData[0].member_id, bookID );
+    } );
 
+    renderMemberBooksHistory( memberData[0].member_id );
+}
+
+function renderMemberBooksHistory( memberID ) {
     const memberBooksQuery =
         'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
         ' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
-        memberData[0].member_id +
+        memberID +
         ' ORDER BY doi DESC LIMIT 30;';
 
     getQueryData( memberBooksQuery ).then( ( result ) => {
@@ -55,6 +61,71 @@ function displayMemberDetails( memberData ) {
     } ).catch( ( err ) => {
         throw err;
     } );
+}
+
+function issueMemberBookHandler(event, memberID, bookID) {
+	event.preventDefault();
+
+	const flatNumber = getFlatNumberFromMemberID(memberID);
+
+    const bookAvailabilityQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+
+	const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
+	const updateBookAvailablilityQuery = `UPDATE books
+        SET  books.available = 0
+        WHERE books.book_id = ${bookID};`;
+
+	async function issueBook() {
+		try {
+            const bookData = await getQueryData(bookAvailabilityQuery);
+
+            if (bookData[0].available === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Book not available',
+                    text: 'This book is already issued',
+                    button: 'OK',
+                });
+                return;
+            } else {
+                const bookTitle = bookData[0].title;
+                const bookAuthor = bookData[0].author;
+                
+                const bookIssueConfirmation = await Swal.fire({
+                    icon: 'question',
+                    title: 'Confirm book issue',
+                    text: `Issue ${bookTitle} by ${bookAuthor}?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                });
+
+                if (!bookIssueConfirmation.isConfirmed) {
+                    return;
+                }
+                const result1 = await getQueryData(issueBookQuery);
+
+			    const result2 = await getQueryData(updateBookAvailablilityQuery);
+
+			    renderMemberBooksHistory(memberID);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Book Issued',
+                    text: `Book issued successfully`,
+                    button: 'OK',
+                });
+            } 
+        } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error issuing book',
+                    button: 'OK',
+                });
+                throw error;
+        }
+    }	
+	issueBook();
 }
 
 /**

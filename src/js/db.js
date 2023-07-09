@@ -22,6 +22,7 @@ function startConnection() {
   
 
 function getQueryData( sqlQuery ) {
+    console.log( sqlQuery );
     return new Promise( function ( resolve, reject ) {
         startConnection();
         // eslint-disable-next-line no-unused-vars

@@ -41,7 +41,6 @@ function checkMemberButtonHandler(e) {
             memberDetailsForm.hidden = false;
         } )
         .catch( ( err ) => {
-            console.log(err);
             Swal.fire( {
                 icon: 'error',
                 title: 'Member not found',
@@ -83,10 +82,8 @@ function checkMemberButtonHandler(e) {
         const newMemberName = memberNameField.value;
         const newMemberMobile = memberMobileField.value;
         const addMemberQuery = `INSERT INTO library.members ( members.member_id, members.name, members.mobile) VALUES('${memberID}', '${newMemberName}', '${newMemberMobile}' );`;
-        console.log( addMemberQuery );
         getQueryData( addMemberQuery )
             .then( ( result ) => {
-                console.log( result );
                 Swal.fire( {
                     icon: 'success',
                     title: 'Member added',
@@ -96,7 +93,6 @@ function checkMemberButtonHandler(e) {
                 } );
             } )
             .catch( ( err ) => {
-                console.log( err );
                 Swal.fire( {
                     icon: 'error',
                     title: 'Error adding member',
@@ -128,7 +124,6 @@ function checkMemberButtonHandler(e) {
 
                 getQueryData( updateMemberQuery )
                     .then( ( result ) => {
-                        console.log( result );
                         Swal.fire( {
                             icon: 'success',
                             title: 'Member details updated',
@@ -138,7 +133,6 @@ function checkMemberButtonHandler(e) {
                         } );       
                     } )
                     .catch( ( err ) => {
-                        console.log( err );
                         Swal.fire( {
                             icon: 'error',
                             title: 'Error updating member details',

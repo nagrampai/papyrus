@@ -14,7 +14,6 @@ const issuedBooksQuery = `
     WHERE books.available = 0;
     `;
 runDBQuery( issuedBooksQuery, ( result ) => {
-    console.log( result[0]['COUNT(*)'] );
     const issuedBooksCountDiv = document.querySelector( '.issued-books-count' );
     issuedBooksCountDiv.innerHTML = result[0]['COUNT(*)'];
 
