@@ -59,9 +59,6 @@ function displayBookResult( bookData ) {
             const flatNumber = document.querySelector( '#issue-flat-number' ).value;
             issueBookHandler( event, flatNumber, bookData[0].book_id );
         } );
-
-        
-
     } else {
         booksContent += `The book is currently issued and not available <br/><br/>
         <button id="return-book" type="submit" value="Return" class="group  w-9/12 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2">Return Book</button>
@@ -79,14 +76,14 @@ function displayBookResult( bookData ) {
 /**
  * Handle book issue form submission
  * 
+ * @param {Object} event
+ * @param {String} flatNumber
+ * @param {Number} bookID
  */
 
 function issueBookHandler( event, flatNumber, bookID ) {
     event.preventDefault();
-    //const flatNumber =
-        //document.querySelector( '#issue-flat-number' ).value;
     const memberID = getMemberIDFromFlatNumber( flatNumber );
-    //const bookID = bookData[0].book_id;
 
     if ( memberID === null ) {
         Swal.fire( {
@@ -257,3 +254,4 @@ function renderBookHistory( bookHistory ) {
 }
 
 exports.displayBookResult = displayBookResult;
+exports.issueBookHandler = issueBookHandler;

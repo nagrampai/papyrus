@@ -30,7 +30,19 @@ function displayMemberDetails( memberData ) {
       Remarks  : ${memberData[0].remarks} <br />
     </div>`;
 
-    leftColumn.innerHTML = memberDetails;
+    // create issue book form
+    const issueBook = `
+    <div id='issue-book' class="mt-5 " >
+        <form id="book-issue-form" action="" target="_top">
+            <input type="text" name="issue-book-code" id="issue-book-code" placeholder="Book Code" required class="py-2 px-4 border-2 w-9/12" maxlength="5"><br />
+            <input type="submit" value="Issue Book" class="group  w-6/12 justify-center rounded-md border border-transparent bg-indigo-600 py-1 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-2">
+        </form>
+    </div>`;
+    leftColumn.innerHTML = memberDetails + issueBook;
+
+    const issueBookForm = document.querySelector( '#book-issue-form' );
+    issueBookForm.addEventListener( 'submit', issueBookHandler );
+    
 
     const memberBooksQuery =
         'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
