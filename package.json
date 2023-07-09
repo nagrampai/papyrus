@@ -1,6 +1,6 @@
 {
     "name": "papyrus",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "test app for learning",
     "main": "main.js",
     "type": "commonjs",
@@ -34,19 +34,6 @@
         "forge": {
             "packagerConfig": {},
             "makers": [
-                {
-                    "name": "@electron-forge/maker-squirrel",
-                    "config": {
-                        "name": "papyrus"
-                    }
-                },
-                {
-                    "name": "@electron-forge/maker-zip",
-                    "platforms": [
-                        "darwin",
-                        "linux"
-                    ]
-                },
                 {
                     "name": "@electron-forge/maker-deb",
                     "config": {
