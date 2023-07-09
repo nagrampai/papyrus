@@ -50,8 +50,6 @@ function checkMemberButtonHandler(e) {
             } );
 
             checkMemberButton.hidden = true;
-            //editMemberButton.hidden = false;
-            //editMemberButton.disabled = false;
             editMemberButton.addEventListener( 'click', addMemberHandler );
             memberSearchForm.hidden = true;
             memberDetailsForm.hidden = false;
@@ -73,7 +71,7 @@ function checkMemberButtonHandler(e) {
         editMemberButton.disabled = false;
         editMemberButton.addEventListener( 'click', editMemberHandler );
     }
-
+    
     /**
      * Add member details handler
      *
