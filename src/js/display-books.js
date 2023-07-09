@@ -54,62 +54,13 @@ function displayBookResult( bookData ) {
         leftColumn.innerHTML = booksContent;
 
         const issueBookForm = document.querySelector( '#book-issue-form' );
-        issueBookForm.addEventListener( 'submit', issueBookHandler );
+        issueBookForm.addEventListener( 'submit', ( event ) => {
+            event.preventDefault();
+            const flatNumber = document.querySelector( '#issue-flat-number' ).value;
+            issueBookHandler( event, flatNumber, bookData[0].book_id );
+        } );
 
-        function issueBookHandler( e ) {
-            e.preventDefault();
-            const flatNumber =
-                document.querySelector( '#issue-flat-number' ).value;
-            const memberID = getMemberIDFromFlatNumber( flatNumber );
-            const bookID = bookData[0].book_id;
-
-            if ( memberID === null ) {
-                Swal.fire( {
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Invalid Flat Number',
-                    button: 'OK',
-                } );
-                return;
-            }
-
-            const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
-            const updateBookAvailablilityQuery = `UPDATE books
-                SET  books.available = 0
-                WHERE books.book_id = ${bookID};`;
-            const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-            
-            async function issueBook() {
-                try {
-                        const result1 = await getQueryData(issueBookQuery);
-                        console.log(result1);
-                    
-                        const result2 = await getQueryData(updateBookAvailablilityQuery);
-                        console.log(result2);
-                    
-                        const result3 = await getQueryData(refreshBookStatusQuery);
-                        console.log(result3);
-                
-                        displayBookResult(result3);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Book Issued',
-                            text: `Book issued to ${flatNumber.toUpperCase()}`,
-                            button: 'OK',
-                        });
-                } catch (error) {
-                    console.log(error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Could not issue book',
-                        text: 'Please recheck the flat number (Alphabet + 4 digits), or if the member exists in Papyrus.',
-                        button: 'OK',
-                    });
-                    throw error;    
-                }
-              }
-              issueBook();
-        }
+        
 
     } else {
         booksContent += `The book is currently issued and not available <br/><br/>
@@ -123,6 +74,66 @@ function displayBookResult( bookData ) {
             returnBookHandler( event, bookData[0].book_id );
         } ); 
     }
+}
+
+/**
+ * Handle book issue form submission
+ * 
+ */
+
+function issueBookHandler( event, flatNumber, bookID ) {
+    event.preventDefault();
+    //const flatNumber =
+        //document.querySelector( '#issue-flat-number' ).value;
+    const memberID = getMemberIDFromFlatNumber( flatNumber );
+    //const bookID = bookData[0].book_id;
+
+    if ( memberID === null ) {
+        Swal.fire( {
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Invalid Flat Number',
+            button: 'OK',
+        } );
+        return;
+    }
+
+    const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
+    const updateBookAvailablilityQuery = `UPDATE books
+        SET  books.available = 0
+        WHERE books.book_id = ${bookID};`;
+    const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+    
+    async function issueBook() {
+        try {
+                const result1 = await getQueryData(issueBookQuery);
+                console.log(result1);
+            
+                const result2 = await getQueryData(updateBookAvailablilityQuery);
+                console.log(result2);
+            
+                const result3 = await getQueryData(refreshBookStatusQuery);
+                console.log(result3);
+        
+                displayBookResult(result3);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Book Issued',
+                    text: `Book issued to ${flatNumber.toUpperCase()}`,
+                    button: 'OK',
+                });
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Could not issue book',
+                text: 'Please recheck the flat number (Alphabet + 4 digits), or if the member exists in Papyrus.',
+                button: 'OK',
+            });
+            throw error;    
+        }
+      }
+      issueBook();
 }
 
 /**
