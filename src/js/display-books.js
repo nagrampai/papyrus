@@ -119,49 +119,50 @@ function displayBookResult( bookData ) {
         leftColumn.innerHTML = booksContent;
 
         const returnBookButton = document.querySelector( '#return-book' );
-        returnBookButton.addEventListener( 'click', returnBookHandler );
+        returnBookButton.addEventListener( 'click', ( event ) => {
+            returnBookHandler( event, bookData[0].book_id );
+        } ); 
+    }
+}
 
-        
-        /**
+/**
          * Handle return book form submission
         *
         * @param {Object} e
         */
-       function returnBookHandler( e ) {
-           e.preventDefault();
-           const bookID = bookData[0].book_id;
-           const returnBookQuery = `UPDATE books, transactions
-           SET books.available = 1, transactions.dor = NOW()
-           WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
-           const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
-           
-            async function returnBook() {
-                try {
-                    const result1 = await getQueryData(returnBookQuery);
-                
-                    const result2 = await getQueryData(refreshBookStatusQuery)
-                
-                    displayBookResult(result2);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Book Returned',
-                        text: 'Book returned successfully',
-                        button: 'OK',
-                    });
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Could not return book',
-                        button: 'OK',
-                    });
-                    throw error;    
-                }
-            }
-            returnBook();
-        }
-    }
-}
+function returnBookHandler( e, bookID ) {
+    e.preventDefault();
+    const returnBookQuery = `UPDATE books, transactions
+    SET books.available = 1, transactions.dor = NOW()
+    WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
+    const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+    
+     async function returnBook() {
+         try {
+             const result1 = await getQueryData(returnBookQuery);
+         
+             const result2 = await getQueryData(refreshBookStatusQuery)
+         
+             displayBookResult(result2);
+             Swal.fire({
+                 icon: 'success',
+                 title: 'Book Returned',
+                 text: 'Book returned successfully',
+                 button: 'OK',
+             });
+         } catch (error) {
+             Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Could not return book',
+                 button: 'OK',
+             });
+             throw error;    
+         }
+     }
+     returnBook();
+ }
+
 
 /**
  * Query for book issue history
