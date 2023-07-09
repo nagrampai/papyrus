@@ -134,7 +134,7 @@ function returnBookHandler( e, bookID ) {
     e.preventDefault();
     const returnBookQuery = `UPDATE books, transactions
     SET books.available = 1, transactions.dor = NOW()
-    WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID};`;
+    WHERE books.book_id = ${bookID} AND transactions.book_id = ${bookID} AND transactions.dor IS NULL;`;
     const refreshBookStatusQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
     
      async function returnBook() {
