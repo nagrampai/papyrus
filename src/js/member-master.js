@@ -21,6 +21,7 @@ memberSearchForm.addEventListener( 'submit', checkMemberButtonHandler );
 function checkMemberButtonHandler(e) {
     e.preventDefault();
     const memberFlatNumber = memberFlatNumberField.value;
+    console.log( memberFlatNumber );
 
     if ( memberFlatNumber.length !== 5 ) {
         Swal.fire( {
@@ -37,10 +38,8 @@ function checkMemberButtonHandler(e) {
 
     getQueryData( memberSearchQuery )
         .then( ( result ) => {
-            checkMemberDetails( result );
-            memberDetailsForm.hidden = false;
-        } )
-        .catch( ( err ) => {
+           if( result[0] ) checkMemberDetails( result );
+           else {
             Swal.fire( {
                 icon: 'error',
                 title: 'Member not found',
@@ -49,9 +48,13 @@ function checkMemberButtonHandler(e) {
             } );
 
             checkMemberButton.hidden = true;
-            editMemberButton.addEventListener( 'click', addMemberHandler );
-            memberSearchForm.hidden = true;
             memberDetailsForm.hidden = false;
+            editMemberButton.hidden = false;
+            editMemberButton.disabled = false;
+            editMemberButton.addEventListener( 'click', addMemberHandler );
+           }
+        } )
+        .catch( ( err ) => {
             throw err;
         } );
 
@@ -63,10 +66,12 @@ function checkMemberButtonHandler(e) {
      */
 
     function checkMemberDetails( memberDetails ) {
+        console.log( memberDetails );
         memberNameField.value = memberDetails[0].name;
         memberMobileField.value = memberDetails[0].mobile ?? null;
         checkMemberButton.hidden = true;
         editMemberButton.hidden = false;
+        memberDetailsForm.hidden = false;
         editMemberButton.disabled = false;
         editMemberButton.addEventListener( 'click', editMemberHandler );
     }
