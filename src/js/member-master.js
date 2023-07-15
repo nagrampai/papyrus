@@ -70,6 +70,7 @@ function checkMemberButtonHandler(e) {
         memberNameField.value = memberDetails[0].name;
         memberMobileField.value = memberDetails[0].mobile ?? null;
         checkMemberButton.hidden = true;
+        checkMemberButton.disabled = true;
         editMemberButton.hidden = false;
         memberDetailsForm.hidden = false;
         editMemberButton.disabled = false;
