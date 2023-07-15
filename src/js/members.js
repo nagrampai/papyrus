@@ -42,8 +42,8 @@ function displayMemberDetails( memberData ) {
     const issueBookForm = document.querySelector( '#book-issue-form' );
     issueBookForm.addEventListener( 'submit', ( event ) => {
         event.preventDefault();
-        const bookID = document.querySelector( '#issue-book-code' ).value;
-        issueMemberBookHandler( event, memberData[0].member_id, bookID );
+        const bookSearchTerm = document.querySelector( '#issue-book-code' ).value;
+        issueMemberBookHandler( event, memberData[0].member_id, bookSearchTerm );
     } );
 
     renderMemberBooksHistory( memberData[0].member_id );
@@ -63,22 +63,22 @@ function renderMemberBooksHistory( memberID ) {
     } );
 }
 
-function issueMemberBookHandler(event, memberID, bookID) {
+function issueMemberBookHandler( event, memberID, bookSearchTerm ) {
 	event.preventDefault();
 
-	const flatNumber = getFlatNumberFromMemberID(memberID);
+    let bookSearchField = "book_id";
 
-    const bookAvailabilityQuery = `SELECT * FROM books WHERE book_id = ${bookID};`;
+    if( bookSearchTerm.length === 5 && bookSearchTerm[0].toUpperCase() === 'G' || bookSearchTerm[0].toUpperCase() === 'K' ) {
+        bookSearchField = "book_code";
+    }
+    
+    const bookAvailabilityQuery = `SELECT * FROM books WHERE ${bookSearchField} = "${bookSearchTerm.toUpperCase()}";`;
 
-	const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
-	const updateBookAvailablilityQuery = `UPDATE books
-        SET  books.available = 0
-        WHERE books.book_id = ${bookID};`;
-
+    
 	async function issueBook() {
-		try {
+        try {
             const bookData = await getQueryData(bookAvailabilityQuery);
-
+        
             if (bookData[0].available === 0) {
                 Swal.fire({
                     icon: 'error',
@@ -99,12 +99,18 @@ function issueMemberBookHandler(event, memberID, bookID) {
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'No',
                 });
-
+                
                 if (!bookIssueConfirmation.isConfirmed) {
                     return;
                 }
+                
+                const bookID = bookData[0].book_id;
+                const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
+                const updateBookAvailablilityQuery = `UPDATE books
+                SET  books.available = 0
+                WHERE books.book_id = ${bookID};`;
+                
                 const result1 = await getQueryData(issueBookQuery);
-
 			    const result2 = await getQueryData(updateBookAvailablilityQuery);
 
 			    renderMemberBooksHistory(memberID);
