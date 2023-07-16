@@ -2,11 +2,13 @@ require( 'dotenv' ).config();
 const mysql = require( 'mysql' );
 const { default: Swal } = require('sweetalert2');
 
+console.log( process.env.DB_PWD, process.env.DB_USERNAME, process.env.DB_NAME );
+
 const connection = mysql.createConnection( {
     host: 'localhost',
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PWD,
-    database: process.env.DB_NAME,
+    user: 'athenalibrary',
+    password: 'athena@123$',
+    database: 'library'
 } );
 
 function startConnection() {
@@ -14,6 +16,7 @@ function startConnection() {
     try {
       if (connection.state === 'disconnected') {
         connection.connect();
+        console.log( connection );
       }
     } catch (error) {
       throw error;
