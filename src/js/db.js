@@ -1,26 +1,31 @@
 require( 'dotenv' ).config();
 const mysql = require( 'mysql' );
+const { default: Swal } = require('sweetalert2');
+
+console.log( process.env.DB_PWD, process.env.DB_USERNAME, process.env.DB_NAME );
 
 const connection = mysql.createConnection( {
     host: 'localhost',
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PWD,
-    database: process.env.DB_NAME,
+    user: 'athenalibrary',
+    password: 'athena@123$',
+    database: 'library'
 } );
 
 function startConnection() {
     // Open a DB connection if there is none already open.
-    if ( connection.state === 'disconnected' ) {
-        connection.connect( ( error ) => {
-            if ( error ) {
-                throw error;
-            }
-        } );
+    try {
+      if (connection.state === 'disconnected') {
+        connection.connect();
+        console.log( connection );
+      }
+    } catch (error) {
+      throw error;
     }
-}
+  }
+  
 
 function getQueryData( sqlQuery ) {
-    console.log( connection.state );
+    console.log( sqlQuery );
     return new Promise( function ( resolve, reject ) {
         startConnection();
         // eslint-disable-next-line no-unused-vars
@@ -33,6 +38,7 @@ function getQueryData( sqlQuery ) {
     } );
 }
 
+/* function runDBQuery to be deprecated soon */
 function runDBQuery( sqlQuery, callback ) {
     console.log( sqlQuery );
     getQueryData( sqlQuery )
@@ -41,11 +47,16 @@ function runDBQuery( sqlQuery, callback ) {
         } )
         .catch( ( err ) =>
             setImmediate( () => {
-                // eslint-disable-next-line no-alert, no-undef
-                alert( 'Unable to locate book / member in our record' );
+                Swal.fire( {
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Unable to locate book / member in our record',
+                    button: 'OK',
+                } );
                 throw err;
             } )
         );
 }
 
 exports.runDBQuery = runDBQuery;
+exports.getQueryData = getQueryData;

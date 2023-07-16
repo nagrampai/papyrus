@@ -1,4 +1,5 @@
-const { runDBQuery } = require( './db' );
+const { default: Swal } = require('sweetalert2');
+const { getQueryData } = require( './db' );
 const { createTableRow } = require( './utils/create-table-row' );
 
 /**
@@ -9,29 +10,128 @@ const { createTableRow } = require( './utils/create-table-row' );
 
 function displayMemberDetails( memberData ) {
     if ( memberData.length === 0 ) {
-        // eslint-disable-next-line no-alert, no-undef
-        alert( 'Member not found. Is that an Athenian?!' );
+        Swal.fire( {
+            icon: 'error',
+            title: 'Member not found',
+            text: 'Is that an Athenian?!',
+            button: 'OK',
+        } );
+
         return;
     }
-
+   
     const leftColumn = document.querySelector( '#left-column' );
     const memberDetails = `
     <div id='member-details' class='mb-5'>
       <h2 class='text-2xl font-bold mb-5'>Member Details</h2>
       Member ID: ${memberData[0].member_id} <br />
       Name     : ${memberData[0].name} <br />
+      Mobile   : ${memberData[0].mobile} <br />
       Remarks  : ${memberData[0].remarks} <br />
     </div>`;
 
-    leftColumn.innerHTML = memberDetails;
+    const issueBook = `
+    <div id='issue-book' class="mt-5 " >
+        <form id="book-issue-form" action="" target="_top">
+            <input type="text" name="issue-book-code" id="issue-book-code" placeholder="Book Code" required class="py-2 px-4 border-2 w-9/12" maxlength="5"><br />
+            <input type="submit" value="Issue Book" class="group  w-6/12 justify-center rounded-md border border-transparent bg-indigo-600 py-1 px-1 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-2">
+        </form>
+    </div>`;
+    leftColumn.innerHTML = memberDetails + issueBook;
 
+    const issueBookForm = document.querySelector( '#book-issue-form' );
+    issueBookForm.addEventListener( 'submit', ( event ) => {
+        event.preventDefault();
+        const bookSearchTerm = document.querySelector( '#issue-book-code' ).value;
+        issueMemberBookHandler( event, memberData[0].member_id, bookSearchTerm );
+    } );
+
+    renderMemberBooksHistory( memberData[0].member_id );
+}
+
+function renderMemberBooksHistory( memberID ) {
     const memberBooksQuery =
         'SELECT transactions.doi, transactions.dor, books.book_id, books.title, books.author' +
         ' FROM transactions INNER JOIN books ON transactions.book_id=books.book_id WHERE transactions.member_id=' +
-        memberData[0].member_id +
-        ' ORDER BY doi DESC LIMIT 10;';
+        memberID +
+        ' ORDER BY doi DESC LIMIT 30;';
 
-    runDBQuery( memberBooksQuery, renderMemberBooks );
+    getQueryData( memberBooksQuery ).then( ( result ) => {
+        renderMemberBooks( result );
+    } ).catch( ( err ) => {
+        throw err;
+    } );
+}
+
+function issueMemberBookHandler( event, memberID, bookSearchTerm ) {
+	event.preventDefault();
+
+    let bookSearchField = "book_id";
+
+    if( bookSearchTerm.length === 5 && bookSearchTerm[0].toUpperCase() === 'G' || bookSearchTerm[0].toUpperCase() === 'K' ) {
+        bookSearchField = "book_code";
+    }
+    
+    const bookAvailabilityQuery = `SELECT * FROM books WHERE ${bookSearchField} = "${bookSearchTerm.toUpperCase()}";`;
+
+    
+	async function issueBook() {
+        try {
+            const bookData = await getQueryData(bookAvailabilityQuery);
+        
+            if (bookData[0].available === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Book not available',
+                    text: 'This book is already issued',
+                    button: 'OK',
+                });
+                return;
+            } else {
+                const bookTitle = bookData[0].title;
+                const bookAuthor = bookData[0].author;
+                
+                const bookIssueConfirmation = await Swal.fire({
+                    icon: 'question',
+                    title: 'Confirm book issue',
+                    text: `Issue ${bookTitle} by ${bookAuthor}?`,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                });
+                
+                if (!bookIssueConfirmation.isConfirmed) {
+                    return;
+                }
+                
+                const bookID = bookData[0].book_id;
+                const issueBookQuery = `INSERT INTO transactions (book_id, member_id, doi) VALUES (${bookID}, ${memberID}, NOW());`;
+                const updateBookAvailablilityQuery = `UPDATE books
+                SET  books.available = 0
+                WHERE books.book_id = ${bookID};`;
+                
+                const result1 = await getQueryData(issueBookQuery);
+			    const result2 = await getQueryData(updateBookAvailablilityQuery);
+
+			    renderMemberBooksHistory(memberID);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Book Issued',
+                    text: `Book issued successfully`,
+                    button: 'OK',
+                });
+            } 
+        } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error issuing book',
+                    button: 'OK',
+                });
+                throw error;
+        }
+    }	
+	issueBook();
 }
 
 /**
@@ -67,23 +167,30 @@ function renderMemberBooks( memberBooks ) {
 
     memberBooksTable.appendChild( tableHeader );
 
+    // In member history show issued books first
+    const memberIssuedBooks = memberBooks.filter( ( book ) => book.dor === null );  
+    const memberReturnedBooks = memberBooks.filter( ( book ) => book.dor !== null );    
     // add rows to member history table
-    memberBooks.forEach( ( book ) => {
-        const row = document.createElement( 'tr' );
-        row.classList.add( 'border', 'border-solid', 'border-black' );
+   function addBooksToTable( Books ){ 
+        Books.forEach( ( book ) => {
+            const row = document.createElement( 'tr' );
+            row.classList.add( 'border', 'border-solid', 'border-black' );
 
-        showDate( book.doi, row );
-        showDate( book.dor, row );
+            showDate( book.doi, row );
+            showDate( book.dor, row );
 
-        const bookColumnNames = [ 'book_id', 'title', 'author' ];
-        bookColumnNames.forEach( ( columnName ) => {
-            createTableRow( book[columnName], row );
+            const bookColumnNames = [ 'book_id', 'title', 'author' ];
+            bookColumnNames.forEach( ( columnName ) => {
+                createTableRow( book[columnName], row );
+            } );
+
+            memberBooksTable.appendChild( row );
+            rightColumn.innerHTML = '';
+            rightColumn.appendChild( memberBooksTable );
         } );
-
-        memberBooksTable.appendChild( row );
-        rightColumn.innerHTML = '';
-        rightColumn.appendChild( memberBooksTable );
-    } );
+    }
+    addBooksToTable( memberIssuedBooks );
+    addBooksToTable( memberReturnedBooks );
 }
 
 /**
