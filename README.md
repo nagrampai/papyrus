@@ -7,7 +7,7 @@ This software is originally made for a community library in an apartment block. 
 1. Install MySQL database on your system. and create a database with the name - library.
 2. Import the sample DB into it
 3. clone the repo and run `npm install` and then `npm start` to get the app running
-4. Please make sure the correct database credentials are added in ./src/js/db.js
+4. Create a .env file based on sample.env, and update the db credentials on it.
 
 The software is purely experimental and is presented on an as-is basis for anyone to play with.
 
